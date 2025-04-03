@@ -1,0 +1,77 @@
+Sub AddStartAndEndDatesForBothPeriods()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim announceDateCol As Long
+    Dim startDateAnnCol As Long, endDateAnnCol As Long
+    Dim startDateEstCol As Long, endDateEstCol As Long
+    Dim i As Long, lastCol As Long
+    
+    ' Set the worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    
+    ' Find the "Announce Date" column
+    announceDateCol = 0
+    For i = 1 To ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If ws.Cells(1, i).Value = "M&A Announced Date" Then
+            announceDateCol = i
+            Exit For
+        End If
+    Next i
+
+    If announceDateCol = 0 Then
+        MsgBox "Announce Date column not found."
+        Exit Sub
+    End If
+    
+    ' Check if the columns already exist
+    lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+    For i = 1 To lastCol
+        If ws.Cells(1, i).Value = "Start Date (Event)" Then startDateAnnCol = i
+        If ws.Cells(1, i).Value = "End Date (Event)" Then endDateAnnCol = i
+        If ws.Cells(1, i).Value = "Start Date (Estimation)" Then startDateEstCol = i
+        If ws.Cells(1, i).Value = "End Date (Estimation)" Then endDateEstCol = i
+    Next i
+
+    ' Add new columns if they do not exist
+    If startDateAnnCol = 0 Then
+        startDateAnnCol = lastCol + 1
+        ws.Cells(1, startDateAnnCol).Value = "Start Date (Event)"
+        lastCol = lastCol + 1
+    End If
+
+    If endDateAnnCol = 0 Then
+        endDateAnnCol = lastCol + 1
+        ws.Cells(1, endDateAnnCol).Value = "End Date (Event)"
+        lastCol = lastCol + 1
+    End If
+
+    If startDateEstCol = 0 Then
+        startDateEstCol = lastCol + 1
+        ws.Cells(1, startDateEstCol).Value = "Start Date (Estimation)"
+        lastCol = lastCol + 1
+    End If
+
+    If endDateEstCol = 0 Then
+        endDateEstCol = lastCol + 1
+        ws.Cells(1, endDateEstCol).Value = "End Date (Estimation)"
+    End If
+
+    ' Determine the last row with data
+    lastRow = ws.Cells(ws.Rows.Count, announceDateCol).End(xlUp).Row
+
+    ' Calculate Start and End Dates for both periods
+    For i = 2 To lastRow
+        If IsDate(ws.Cells(i, announceDateCol).Value) Then
+            ' Announcement Period: 15 days before to 15 days after the announce date
+            ws.Cells(i, startDateAnnCol).Value = WorksheetFunction.WorkDay(ws.Cells(i, announceDateCol).Value, -15)
+            ws.Cells(i, endDateAnnCol).Value = WorksheetFunction.WorkDay(ws.Cells(i, announceDateCol).Value, 15)
+            
+            ' Estimation Period: 250 days before to 16 days before the announce date
+            ws.Cells(i, startDateEstCol).Value = WorksheetFunction.WorkDay(ws.Cells(i, announceDateCol).Value, -266)
+            ws.Cells(i, endDateEstCol).Value = WorksheetFunction.WorkDay(ws.Cells(i, announceDateCol).Value, -16)
+        End If
+    Next i
+
+    MsgBox "Start and End Dates for both periods have been added successfully!"
+End Sub
+
