@@ -104,32 +104,25 @@ df$StoC = df$Size / df$Cash_and_Equivalents
 
 #Reformatting from million to billion
 df$Size = df$Size / 1000
-df$Cash_and_Equivalents` = df$Cash_and_Equivalents / 1000
+df$Cash_and_Equivalents = df$Cash_and_Equivalents / 1000
 df$TotalAssets = df$TotalAssets / 1000
 
 #Creating more control variables
 df$Margin = df$EBITDA / df$Revenue
 
-# One-hot encode buyer sector
-#buyer_dummies <- model.matrix(~ `Primary Sector [Buyers/Investors]` - 1, data = df)
-#colnames(buyer_dummies) <- paste0("BS_", gsub("[^[:alnum:]_]", "", colnames(buyer_dummies)))  # clean col names
-#df <- cbind(df, buyer_dummies)
-
-# One-hot encode buyer sector
+# One-hot encode target sector
 target_dummies <- model.matrix(~ `Primary Sector [Target/Issuer]` - 1, data = df)
 
 # Extract just the sector name from the column and clean it
 clean_names <- sub(".*\\]", "", colnames(target_dummies))             # remove everything before ]
 clean_names <- gsub("[`'\"]", "", clean_names)                        # remove backticks, quotes
-clean_names <- gsub("\\s+", "_", clean_names)                         # optional: replace spaces with underscores
+clean_names <- gsub("\\s+", "_", clean_names)                       # optional: replace spaces with underscores
 
 # Add prefix
 colnames(target_dummies) <- paste0("TS_", clean_names)
 
 # Combine
 df <- cbind(df, target_dummies)
-
-
 
 #Creating the Crisis variable
 crisis_periods = list(
@@ -150,7 +143,7 @@ df$Crisis <- sapply(df$AnnouncementDate, is_in_crisis, intervals = crisis_period
 df$Crisis <- as.integer(df$Crisis)  # convert TRUE/FALSE to 1/0
 
 #Correlation matrix to make sure that the variables look correct
-vars <- c("Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash and Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate")
+vars <- c("Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate")
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
@@ -158,7 +151,7 @@ cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
 corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
 
 #Checking correlations of independent variables with some regressors
-vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]","Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash and Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate")
+vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]","Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate")
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
