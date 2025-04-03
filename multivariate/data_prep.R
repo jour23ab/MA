@@ -104,7 +104,7 @@ df$StoC = df$Size / df$Cash_and_Equivalents
 
 #Reformatting from million to billion
 df$Size = df$Size / 1000
-df$`Cash and Equivalents` = df$Cash_and_Equivalents / 1000
+df$Cash_and_Equivalents` = df$Cash_and_Equivalents / 1000
 df$TotalAssets = df$TotalAssets / 1000
 
 #Creating more control variables
