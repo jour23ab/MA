@@ -9,7 +9,7 @@ graphics.off()
 # What is the current working directory?
 getwd()
 # Set working directory
-setwd('C:/Users/johan/Documents/Documents/Universitet/5. år MSc/Thesis')
+setwd('C:/Users/johan/Documents/GitHub/MA')
 # Confirm working directory
 getwd()
 ##########################################################################################################
@@ -51,8 +51,7 @@ library(ggplot2)
 #Loading data
 #data=read_xlsx("CAR_analysis_COMPARISON_with_target_type.xlsx")
 #data=read_xlsx("CAR_v2.xlsx")
-data=read_xlsx("CAR_v5.xlsx")
-
+data=read_xlsx("data/processed/CAR_v5.xlsx")
 
 #Creating variables
 df <- data %>%
@@ -101,7 +100,7 @@ df <- df %>%
 #Testing different relative ratios
 df$StoMC = df$Size / df$MarketCap
 df$StoE = df$Size / df$BookEquity
-df$StoC = df$Size / df$`Cash and Equivalents`
+df$StoC = df$Size / df$Cash_and_Equivalents
 
 #Reformatting from million to billion
 df$Size = df$Size / 1000
@@ -173,13 +172,14 @@ df <- df %>%
   filter(`Target Type` != "Unknown")
 
 ###Multiple Regression
+
 #Excluded TS_Health_Care because this is perfectly correlated with Diversifcation
 #No data for TS_Materials, TS_Real_Estate and Unknown
-model1 = lm(`[-10, 10]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model2 = lm(`[-7, 7]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model3 = lm(`[-5, 5]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model4 = lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model5 = lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model1 = lm(`[-10, 10]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model2 = lm(`[-7, 7]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model3 = lm(`[-5, 5]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model4 = lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model5 = lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
 
 #Winsorization to remove the bottom 1% and top 99% CARs - capping outliers
 df$CAR_10_wins <- Winsorize(df$`[-10, 10]`, val = quantile(df$`[-10, 10]`, probs = c(0.01, 0.99), na.rm = TRUE))
@@ -189,11 +189,11 @@ df$CAR_3_wins  <- Winsorize(df$`[-3, 3]`, val = quantile(df$`[-3, 3]`, probs = c
 df$CAR_1_wins  <- Winsorize(df$`[-1, 1]`, val = quantile(df$`[-1, 1]`, probs = c(0.01, 0.99), na.rm = TRUE))
 
 #Winsorized
-model1 = lm(CAR_10_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model2 = lm(CAR_7_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model3 = lm(CAR_5_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
-model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + `Cash and Equivalents` + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model1 = lm(CAR_10_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model2 = lm(CAR_7_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model3 = lm(CAR_5_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
+model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology, df)
 
 
 "models = list(
