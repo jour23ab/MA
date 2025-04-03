@@ -131,7 +131,7 @@ ggplot(df, aes(x = CAR_1_wins)) +
   theme_minimal()
 
 #Plotting comparisons based on the binary coefficients
-ggplot(df, aes(x = `[-10, 10]`, fill = factor(Cash))) +
+ggplot(df, aes(x = CAR_10_wins, fill = factor(Cash))) +
   geom_density(alpha = 0.3, adjust = 1.5) +
   labs(title = "Density of Cumulative Abnormal Returns by Cash Payment",
        x = "CAR [-10, 10]",
@@ -140,7 +140,7 @@ ggplot(df, aes(x = `[-10, 10]`, fill = factor(Cash))) +
   xlim(-10, 10) +
   theme_minimal()
 
-ggplot(df, aes(x = `[-10, 10]`, fill = factor(Private))) +
+ggplot(df, aes(x = CAR_10_wins, fill = factor(Private))) +
   geom_density(alpha = 0.3, adjust = 1.5) +
   labs(title = "Density of Cumulative Abnormal Returns by Listing Status",
        x = "CAR [-10, 10]",
@@ -149,7 +149,7 @@ ggplot(df, aes(x = `[-10, 10]`, fill = factor(Private))) +
   xlim(-10, 10) +
   theme_minimal()
 
-ggplot(df, aes(x = `[-10, 10]`, fill = factor(CrossBorder))) +
+ggplot(df, aes(x = CAR_10_wins, fill = factor(CrossBorder))) +
   geom_density(alpha = 0.3, adjust = 1.5) +
   labs(title = "Density of Abnormal Returns by Cross-Border Status",
        x = "CAR [-10, 10]",
@@ -158,7 +158,7 @@ ggplot(df, aes(x = `[-10, 10]`, fill = factor(CrossBorder))) +
   xlim(-10, 10) +
   theme_minimal()
 
-ggplot(df, aes(x = `[-10, 10]`, fill = factor(Diversification))) +
+ggplot(df, aes(x = CAR_10_wins, fill = factor(Diversification))) +
   geom_density(alpha = 0.3, adjust = 1.5) +
   labs(title = "Density of Cumulative Abnormal Returns by Diversification Status",
        x = "CAR [-10, 10]",
@@ -167,7 +167,7 @@ ggplot(df, aes(x = `[-10, 10]`, fill = factor(Diversification))) +
   xlim(-10, 10) +
   theme_minimal()
 
-ggplot(df, aes(x = `[-10, 10]`, fill = factor(Crisis))) +
+ggplot(df, aes(x = CAR_10_wins, fill = factor(Crisis))) +
   geom_density(alpha = 0.3, adjust = 1.5) +
   labs(title = "Density of Cumulative Abnormal Returns by Crisis Status",
        x = "CAR [-10, 10]",
@@ -175,5 +175,3 @@ ggplot(df, aes(x = `[-10, 10]`, fill = factor(Crisis))) +
        fill = "Crisis") +
   xlim(-10, 10) +
   theme_minimal()
-
-
