@@ -1,18 +1,4 @@
 ##########################################################################################################
-# Clearing console
-cat("\014")
-# Clear environment
-rm(list = ls())
-# Clear figures
-graphics.off()
-##########################################################################################################
-# What is the current working directory?
-getwd()
-# Set working directory
-setwd('C:/Users/johan/Documents/GitHub/MA')
-# Confirm working directory
-getwd()
-##########################################################################################################
 # Packages
 # install.packages("stargazer")
 # install.packages("ggfortify")
@@ -29,7 +15,15 @@ getwd()
 #install.packages
 #install.packages("ggplot2")
 
-
+##########################################################################################################
+# Clearing console
+cat("\014")
+# Clear environment
+rm(list = ls())
+# Clear figures
+graphics.off()
+############################################## Load packages
+library(this.path)
 library(stargazer)
 library(ggfortify)
 library(forecast)
@@ -47,11 +41,21 @@ library(corrplot)
 library(sandwich)
 library(DescTools)
 library(ggplot2)
+
+####################################### Set working directory
+current_dir <- this.path::this.dir()
+setwd(current_dir)
+
+print(getwd())
+
 ##########################################################################################################
 #Loading data
 #data=read_xlsx("CAR_analysis_COMPARISON_with_target_type.xlsx")
 #data=read_xlsx("CAR_v2.xlsx")
-data=read_xlsx("data/processed/CAR_v5.xlsx")
+
+# Load Excel file from sibling folder 'dataprocessed'
+excel_path <- file.path(dirname(current_dir), "data/processed/", "CAR_v5.xlsx")
+data <- read_xlsx(excel_path)
 
 #Creating variables
 df <- data %>%
