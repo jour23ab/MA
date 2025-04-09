@@ -14,25 +14,20 @@ df$CAR_3_wins  <- Winsorize(df$`[-3, 3]`, val = quantile(df$`[-3, 3]`, probs = c
 df$CAR_1_wins  <- Winsorize(df$`[-1, 1]`, val = quantile(df$`[-1, 1]`, probs = c(0.01, 0.99), na.rm = TRUE))
 
 #Winsorized
-model1 = lm(CAR_10_wins ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + 
-            DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + 
-            Diversification + Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, df)
+model1 = lm(CAR_10_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, df)
 
-model2 = lm(CAR_7_wins ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + 
-            DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + 
-            Diversification + Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, df)
+model2 = lm(CAR_7_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, df)
 
-model3 = lm(CAR_5_wins ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + 
-            DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + 
-            Diversification + Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, df)
+model3 = lm(CAR_5_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, df)
 
-model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + 
-            DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + 
-            Diversification + Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, df)
+model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, df)
 
-model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + 
-            DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + 
-            Diversification + Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, df)
+model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, df)
 
 
 # Trimming to remove the bottom 1% and top 1% CARs - dropping outliers
@@ -52,25 +47,20 @@ df_1 <- df[df$`[-1, 1]` >= quantile(df$`[-1, 1]`, 0.01, na.rm = TRUE) &
            df$`[-1, 1]` <= quantile(df$`[-1, 1]`, 0.99, na.rm = TRUE), ]
 
 # Run models on trimmed data
-model1_trim <- lm(`[-10, 10]` ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + DtoE + Hybrid +
-               Size + Cash_and_Equivalents + TargetAsset + Diversification +
-               Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, data = df_10)
+model1_trim <- lm(`[-10, 10]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, data = df_10)
 
-model2_trim <- lm(`[-7, 7]` ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + DtoE + Hybrid +
-               Size + Cash_and_Equivalents + TargetAsset + Diversification +
-               Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, data = df_7)
+model2_trim <- lm(`[-7, 7]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, data = df_7)
 
-model3_trim <- lm(`[-5, 5]` ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + DtoE + Hybrid +
-               Size + Cash_and_Equivalents + TargetAsset + Diversification +
-               Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, data = df_5)
+model3_trim <- lm(`[-5, 5]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread,, data = df_5)
 
-model4_trim <- lm(`[-3, 3]` ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + DtoE + Hybrid +
-               Size + Cash_and_Equivalents + TargetAsset + Diversification +
-               Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, data = df_3)
+model4_trim <- lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, data = df_3)
 
-model5_trim <- lm(`[-1, 1]` ~ Cash + Private + CrossBorder + MtoB + Crisis + Margin + DtoE + Hybrid +
-               Size + Cash_and_Equivalents + TargetAsset + Diversification +
-               Bull_Bear_Spread + num_prior_mergers + gdp_lag1_tgt, data = df_1)
+model5_trim <- lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + running_positive_CAR_percentage_3 +
+                Margin + DtoE + Hybrid + Size + Cash_and_Equivalents + TargetAsset + Bull_Bear_Spread, data = df_1)
 
 #TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology +
 #models = list(
