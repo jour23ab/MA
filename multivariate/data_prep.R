@@ -1,19 +1,22 @@
 ##########################################################################################################
 # Packages
-# install.packages("stargazer")
-# install.packages("ggfortify")
-# install.packages("forecast")
-# install.packages("urca")
-# install.packages("strucchange")
-# install.packages("timetk")
-# install.packages("readr")
-# install.packages("dplyr")
-# install.packages("tidyr")
-# install.packages("readxl")
-# install.packages("corrplot")
-# install.packages("sandwich")
-#install.packages
+#install.packages("stargazer")
+#install.packages("ggfortify")
+#install.packages("forecast")
+#install.packages("urca")
+#install.packages("strucchange")
+#install.packages("timetk")
+#install.packages("readr")
+#install.packages("dplyr")
+#install.packages("tidyr")
+#install.packages("readxl")
+#install.packages("corrplot")
+#install.packages("sandwich")
 #install.packages("ggplot2")
+#install.packages("dynlm")
+#install.packages("this.path")
+#install.packages("DescTools")
+#install.packages("fuzzyjoin")
 
 ##########################################################################################################
 # Clearing console
@@ -149,20 +152,20 @@ df$Crisis <- sapply(df$AnnouncementDate, is_in_crisis, intervals = crisis_period
 df$Crisis <- as.integer(df$Crisis)  # convert TRUE/FALSE to 1/0
 
 #Correlation matrix to make sure that the variables look correct
-vars <- c("Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate", "Bull_Bear_Spread", "running_positive_CAR_percentage_10")
+vars <- c("Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate", "Bull_Bear_Spread", "running_positive_CAR_percentage_10", "gdp_lag1_tgt")
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
 cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
-#corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
+corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
 
 #Checking correlations of independent variables with some regressors
-vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]","Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate", "Bull_Bear_Spread", "running_positive_CAR_percentage_10")
+vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]","Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", "TS_Industrials", "TS_Information_Technology", "TS_Materials", "TS_Real_Estate", "Bull_Bear_Spread", "running_positive_CAR_percentage_10", "gdp_lag1_tgt")
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
 cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
-#corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
+corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
 
 #Removing observations due to some error.
 # df <- df %>%
