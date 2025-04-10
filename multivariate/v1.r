@@ -59,8 +59,7 @@ model4_trim <- lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + M
 model5_trim <- lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP +
                 GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_1)
 
-#TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology +
->>>>>>> Stashed changes
+
 #models = list(
 #  model1,
 #  model2,
