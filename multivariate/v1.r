@@ -30,6 +30,7 @@ model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB +
                 GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 
+
 # Trimming to remove the bottom 1% and top 1% CARs - dropping outliers
 df_10 <- df[df$`[-10, 10]` >= quantile(df$`[-10, 10]`, 0.01, na.rm = TRUE) & 
             df$`[-10, 10]` <= quantile(df$`[-10, 10]`, 0.99, na.rm = TRUE), ]
@@ -61,6 +62,7 @@ model4_trim <- lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + M
 
 model5_trim <- lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP3 +
                 GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_1)
+
 
 #TS_Consumer_Discretionary + TS_Consumer_Staples + TS_Financials + TS_Industrials + TS_Information_Technology +
 #models = list(
