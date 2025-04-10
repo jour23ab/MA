@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import datetime as dt
 import re
+import numpy as np
 
 # Get the directory where the current script is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -14,9 +15,9 @@ os.chdir(ma_dir)
 # Confirm
 print("Working directory set to:", os.getcwd())
 
-##############################################
+# -----------------------------------------------
 # Add bull-bear-spread (sentiment) variable
-##############################################
+# -----------------------------------------------
 
 
 # Reading the Excel files
@@ -65,9 +66,9 @@ df = (df.drop(columns=["Bullish 8-week Mov Avg",
 
 print(df)
 
-##############################################
+# -----------------------------------------------
 # Add running winrate variable and number of mergers variable
-##############################################
+# -----------------------------------------------
 
 
 filsti = f"{ma_dir}/data/processed/2000-2025.xls"
@@ -136,9 +137,9 @@ for label, col_name in event_windows.items():
 
 
 
-##############################################
+# -----------------------------------------------
 # Add GDP growth for previous year for target country column
-##############################################
+# -----------------------------------------------
 
 
 filsti = f"{ma_dir}/data/processed/GPD_yearly_percent_change.xlsx"
@@ -201,10 +202,81 @@ merged_df = df.merge(
     how='left'
 )
 
-# Optional: drop helper columns if you don't need them
+# drop helper columns if you don't need them
 merged_df = merged_df.drop(columns=['Year', 'Country'])
 
 print(merged_df)
+
+df = merged_df
+
+
+# ----------------------------------------------------
+# Add nation debt as percentage of gdp from year before announcement as a variable
+# ----------------------------------------------------
+
+# general government debt (percent of gdp)
+debt_filsti = f"{ma_dir}/data/processed/general_gov_debt_from_imf.xls"
+debt_df = pd.read_excel(debt_filsti)
+
+# Filter countries
+debt_df = debt_df[debt_df['Country'].isin(allowed_countries)].reset_index(drop=True)
+
+# Transpose the DataFrame
+debt_df = debt_df.T
+
+# Save what used to be column names (now first row) as column headers
+debt_df.columns = debt_df.iloc[0]
+
+# Add the transposed index (which used to be column headers) as a column
+debt_df = debt_df[1:]
+debt_df['Year'] = debt_df.index
+
+# Optional: move 'Year' to front
+debt_df = debt_df[['Year'] + [col for col in debt_df.columns if col != 'Year']]
+
+# Reset index if needed
+debt_df = debt_df.reset_index(drop=True)
+
+print(debt_df)
+
+
+# Step 1: Make sure date column is datetime
+df['M&A Announced Date'] = pd.to_datetime(df['M&A Announced Date'])
+
+df['Geographic Locations [Target/Issuer]'] = df['Geographic Locations [Target/Issuer]'].str.strip()
+
+# Step 2: Extract year before announcement
+df['Year'] = df['M&A Announced Date'].dt.year - 1
+
+# Step 3: Melt the GDP dataset so it's long format
+debt_df_long = debt_df.melt(id_vars='Year', var_name='Country', value_name='debt_lag1_tgt')
+
+# Ensure both 'Year' columns are integers
+df['Year'] = df['Year'].astype(int)
+debt_df_long['Year'] = debt_df_long['Year'].astype(int)
+
+# Step 4: Merge on Year and Country
+merged_df = df.merge(
+    debt_df_long,
+    left_on=['Year', "Geographic Locations [Target/Issuer]"],
+    right_on=['Year', 'Country'],
+    how='left'
+)
+
+# drop helper columns if you don't need them
+merged_df = merged_df.drop(columns=['Year', 'Country'])
+
+
+#debt_df("no data", np.nan, inplace=True)
+print(merged_df)
+
+
+
+
+
+
+
+
 
 # Save result
 output = f"{ma_dir}/data/processed/CAR_v5_extra_vars.xlsx"
