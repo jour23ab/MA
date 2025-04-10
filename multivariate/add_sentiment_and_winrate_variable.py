@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import datetime as dt
+import re
 
 # Get the directory where the current script is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -65,11 +66,10 @@ df = (df.drop(columns=["Bullish 8-week Mov Avg",
 print(df)
 
 ##############################################
-# Add running winrate variable
+# Add running winrate variable and number of mergers variable
 ##############################################
 
 
-import pandas as pd
 filsti = f"{ma_dir}/data/processed/2000-2025.xls"
 df_full = pd.read_excel(filsti)
 
@@ -131,16 +131,81 @@ for label, col_name in event_windows.items():
         lambda g: compute_running_positive_CAR(g, col_name)
     )
 
+
+
+
+
+
+##############################################
+# Add GDP growth for previous year for target country column
+##############################################
+
+
+filsti = f"{ma_dir}/data/processed/GPD_yearly_percent_change.xlsx"
+gdp_df = pd.read_excel(filsti)
+
+
+
+# List of countries to keep
+allowed_countries = [
+    "Austria", "Belgium", "Denmark", "Finland", "France", "Germany", "Greece",
+    "Ireland", "Italy", "Netherlands", "Norway", "Portugal", "Spain",
+    "Sweden", "Switzerland", "United Kingdom"
+]
+
+# Filter countries
+gdp_df = gdp_df[gdp_df['Country Name'].isin(allowed_countries)].reset_index(drop=True)
+
+# Clean column names
+gdp_df.columns = gdp_df.columns.str.replace(r'\s*\[.*?\]', '', regex=True).str.strip()
+
+# Transpose the DataFrame
+gdp_df = gdp_df.T
+
+# Save what used to be column names (now first row) as column headers
+gdp_df.columns = gdp_df.iloc[0]
+
+# Add the transposed index (which used to be column headers) as a column
+gdp_df = gdp_df[1:]
+gdp_df['Year'] = gdp_df.index
+
+# Optional: move 'Year' to front
+gdp_df = gdp_df[['Year'] + [col for col in gdp_df.columns if col != 'Year']]
+
+# Reset index if needed
+gdp_df = gdp_df.reset_index(drop=True)
+
+print(gdp_df)
+
+
+# Step 1: Make sure date column is datetime
+df['M&A Announced Date'] = pd.to_datetime(df['M&A Announced Date'])
+
+df['Geographic Locations [Target/Issuer]'] = df['Geographic Locations [Target/Issuer]'].str.strip()
+
+# Step 2: Extract year before announcement
+df['Year'] = df['M&A Announced Date'].dt.year - 1
+
+# Step 3: Melt the GDP dataset so it's long format
+gdp_long = gdp_df.melt(id_vars='Year', var_name='Country', value_name='gdp_lag1_tgt')
+
+# Ensure both 'Year' columns are integers
+df['Year'] = df['Year'].astype(int)
+gdp_long['Year'] = gdp_long['Year'].astype(int)
+
+# Step 4: Merge on Year and Country
+merged_df = df.merge(
+    gdp_long,
+    left_on=['Year', "Geographic Locations [Target/Issuer]"],
+    right_on=['Year', 'Country'],
+    how='left'
+)
+
+# Optional: drop helper columns if you don't need them
+merged_df = merged_df.drop(columns=['Year', 'Country'])
+
+print(merged_df)
+
 # Save result
 output = f"{ma_dir}/data/processed/CAR_v5_extra_vars.xlsx"
-df.to_excel(output, index=False)
-
-
-
-
-
-
-
-
-
-
+merged_df.to_excel(output, index=False)
