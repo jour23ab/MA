@@ -111,13 +111,17 @@ df <- df %>%
 df <- df %>%
   rename(
     BullBearSpread = `Bull_Bear_Spread`,
-    PCP3 = `running_positive_CAR_percentage_10`,
+    PCP10 = `running_positive_CAR_percentage_10`,
+    PCP7 = `running_positive_CAR_percentage_7`,
+    PCP5 = `running_positive_CAR_percentage_5`,
+    PCP3 = `running_positive_CAR_percentage_3`,
+    PCP1 = `running_positive_CAR_percentage_1`,
     GDPG = `gdp_lag1_tgt`,
   )
 
 #Testing different relative ratios
 df$StoMC = df$Size / df$MarketCap
-df$StoE = df$Size / df$BookEquity
+#df$StoE = df$Size / df$BookEquity
 df$StoC = df$Size / df$CashAndEquivalents
 
 #Reformatting from million to billion
@@ -164,8 +168,8 @@ df$Crisis <- as.integer(df$Crisis)  # convert TRUE/FALSE to 1/0
 vars <- c("Cash", "Private", "CrossBorder", 
 "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", 
 "Stock", "Size", "CashAndEquivalents", "TotalAssets", "TargetAsset", 
-"TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "BullBearSpread", 
-"PCP3", "num_prior_mergers", "GDPG", "debt_lag1_tgt")
+"TargetEquity", "Public", "Unknown", "StoMC", "StoC", "BullBearSpread", 
+"PCP10", "PCP7", "PCP3", "PCP1", "GDPG", "debt_lag1_tgt", "num_prior_mergers")
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
@@ -178,8 +182,8 @@ vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]",
 "Cash", "Private", "CrossBorder", 
 "Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", 
 "Stock", "Size", "CashAndEquivalents", "TotalAssets", "TargetAsset", 
-"TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", "BullBearSpread", 
-"PCP3", "num_prior_mergers", "GDPG", "debt_lag1_tgt")
+"TargetEquity", "Public", "Unknown", "StoMC", "StoC", "BullBearSpread", 
+"PCP10", "PCP7", "PCP3", "PCP1", "GDPG", "debt_lag1_tgt", "num_prior_mergers")
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
@@ -196,5 +200,3 @@ df <- df %>%
 load_clean_data <- function() {
   return(df)
 }
-
-
