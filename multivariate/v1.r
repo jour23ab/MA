@@ -4,8 +4,10 @@ setwd(current_dir)
 
 source("data_prep.R")
 df <- load_clean_data()
-#Excluded TS_Health_Care because this is perfectly correlated with Diversifcation
-#No data for TS_Materials, TS_Real_Estate and Unknown
+
+#cut of the data to check changes in some coefficients
+#df <- df[df$`M&A Announced Date` <= "2015-12-31", ]
+
 #Winsorization to remove the bottom 1% and top 99% CARs - capping outliers
 df$CAR_10_wins <- Winsorize(df$`[-10, 10]`, val = quantile(df$`[-10, 10]`, probs = c(0.01, 0.99), na.rm = TRUE))
 df$CAR_7_wins  <- Winsorize(df$`[-7, 7]`, val = quantile(df$`[-7, 7]`, probs = c(0.01, 0.99), na.rm = TRUE))
