@@ -23,7 +23,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # === 1. Raw Distribution (Histogram) ===
 plt.figure(figsize=(10, 6))
-plt.hist(deal_values, bins=30, color='skyblue', edgecolor='black')
+plt.hist(deal_values, bins=60, color='skyblue', edgecolor='black')
 plt.title("Distribution of Deal Values (EUR million)")
 plt.xlabel("Deal Value (€ million)")
 plt.ylabel("Frequency")
