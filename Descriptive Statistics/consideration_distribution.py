@@ -21,10 +21,10 @@ def map_payment_type(value):
         return "Cash"
     elif val == "Common Equity":
         return "Stock"
-    elif "Cash" in val:
+    elif val != "Unknown":
         return "Mixed"
     else:
-        return None  # Exclude Unknown, Combinations, etc.
+        return None  # Exclude Unknown
 
 df["Consideration Category"] = df["Consideration Offered"].apply(map_payment_type)
 cleaned = df.dropna(subset=["Consideration Category"])
