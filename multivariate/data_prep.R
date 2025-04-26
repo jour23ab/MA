@@ -182,6 +182,20 @@ df_subset = df_subset[sapply(df_subset, is.numeric)]
 cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
 corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
 
+#Subsetting the data to remove NA values in specified columns
+df <- df %>%
+  filter(if_all(c("[-10, 10]", "[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]", 
+                  "Cash", "Private", "CrossBorder", "Diversification", "MtoB", 
+                  "Crisis", "PCP10", "PCP7", "PCP5", "PCP3", "PCP1", "GDPG", 
+                  "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", 
+                  "TargetAsset", "Public", "BullBearSpread"),
+                ~ !is.na(.)))
+
+#Printing the number of observations for binary variables
+#for (var in c("Cash", "Private", "CrossBorder", "Diversification", "Crisis")) {
+ # cat(var, ": ", sum(df[[var]]), "\n")
+#}
+
 #Checking correlations of independent variables with some regressors
 vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]",
 "Cash", "Private", "CrossBorder", "Diversification",
@@ -197,5 +211,3 @@ corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex 
 load_clean_data <- function() {
   return(df)
 }
-
-
