@@ -20,16 +20,16 @@ ordered_vars = [
     'Acquirer LTM Financials - Total Cash & ST Investments (at Announcement) (€EURmm, Historical rate)',
 
     # Running CAR benchmarks
-    'running_positive_CAR_percentage_10', 'running_positive_CAR_percentage_7',
-    'running_positive_CAR_percentage_5', 'running_positive_CAR_percentage_3',
-    'running_positive_CAR_percentage_1', 'gdp_lag1_tgt',
+    'PCP10', 'PCP7',
+    'PCP5', 'PCP3',
+    'PCP1', 'GDPG',
 
     # Financial indicators
     'Revenue', 'EBITDA', 'Earnings', 'Debt', 'TotalAssets', 'CommonEquity',
-    'MarketCap', 'Cash_and_Equivalents', 'Size', 'BookEquity',
+    'MarketCap', 'CashAndEquivalents', 'Size', 'BookEquity',
 
     # Ratios
-    'MtoB', 'DtoE', 'StoMC', 'StoE', 'StoC', 'Margin'
+    'MtoB', 'DtoE', 'StoMC', 'StoC', 'Margin'
 ]
 
 # Map to nice display names
@@ -48,26 +48,25 @@ variable_names = {
     'Acquirer LTM Financials - Total Common Equity (at Announcement) (€EURmm, Historical rate)': 'Acquirer common equity',
     'Acquirer Market Cap 1-Day Prior (€EURmm, Historical rate)': 'Acquirer market cap',
     'Acquirer LTM Financials - Total Cash & ST Investments (at Announcement) (€EURmm, Historical rate)': 'Acquirer cash & ST investments',
-    'running_positive_CAR_percentage_10': 'CAR > 0 (%), 10d window',
-    'running_positive_CAR_percentage_7': 'CAR > 0 (%), 7d window',
-    'running_positive_CAR_percentage_5': 'CAR > 0 (%), 5d window',
-    'running_positive_CAR_percentage_3': 'CAR > 0 (%), 3d window',
-    'running_positive_CAR_percentage_1': 'CAR > 0 (%), 1d window',
-    'gdp_lag1_tgt': 'Target GDP growth (t-1)',
-    'Revenue': 'Target revenue',
-    'EBITDA': 'Target EBITDA',
-    'Earnings': 'Target earnings',
-    'Debt': 'Target debt',
-    'TotalAssets': 'Target total assets',
-    'CommonEquity': 'Target common equity',
-    'MarketCap': 'Target market cap',
-    'Cash_and_Equivalents': 'Target cash & equivalents',
-    'Size': 'Relative size (target/acquirer)',
-    'BookEquity': 'Target book equity',
+    'PCP10': 'CAR > 0 (%), 10d window',
+    'PCP7': 'CAR > 0 (%), 7d window',
+    'PCP5': 'CAR > 0 (%), 5d window',
+    'PCP3': 'CAR > 0 (%), 3d window',
+    'PCP1': 'CAR > 0 (%), 1d window',
+    'GDPG': 'Target GDP growth (t-1)',
+    'Revenue': 'Acquirer revenue',
+    'EBITDA': 'Acquirer EBITDA',
+    'Earnings': 'Acquirer earnings',
+    'Debt': 'Acquirer debt',
+    'TotalAssets': 'Acquirer total assets',
+    'CommonEquity': 'Acquirer common equity',
+    'MarketCap': 'Acquirer market cap',
+    'CashAndEquivalents': 'Acquirer cash & equivalents',
+    'Size': 'Relative size (deal value / acquirer)',
+    'BookEquity': 'Acquirer book equity',
     'MtoB': 'Market-to-book',
     'DtoE': 'Debt-to-equity',
     'StoMC': 'Sales-to-market cap',
-    'StoE': 'Sales-to-equity',
     'StoC': 'Sales-to-cash',
     'Margin': 'EBITDA margin'
 }
