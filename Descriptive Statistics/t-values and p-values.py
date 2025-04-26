@@ -74,8 +74,10 @@ for model, df_val in dfs.items():
     df[f"{model}_p_left"] = t.cdf(t_stat, df=df_val)
 
 # Export to Excel
-output_path = os.path.join("Descriptive Statistics", "regression_results_corrected_values.xlsx")
+output_path = os.path.join("Descriptive Statistics", "P-values and t-values/regression_results_corrected_values.xlsx")
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 df.to_excel(output_path, index=False)
 
 output_path
+
+print("done")

@@ -20,7 +20,6 @@ categorical_vars = [
     'Geographic Locations [Buyers/Investors]',
     'Geographic Locations [Target/Issuer]',
     'Target Security Types',
-    'Consideration Offered',
     'Target Type',
     'Diversification',
     'CrossBorder',
