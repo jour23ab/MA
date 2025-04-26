@@ -82,6 +82,7 @@ categorical_vars = [
     'Diversification',
     'CrossBorder',
     'Crisis',
+    'Consideration Offered'
     
 ]
 
@@ -133,4 +134,34 @@ generator = PlotGenerator(df, categorical_vars, out_dir, custom_plot_labels)
 generator.generate_summary_and_plots()
 generator.plot_ma_announcements_by_year('M&A Announced Date')
 
+
+
+
+
+
+
+# Special case: M&A announcements per year
+date_var = 'M&A Announced Date'
+df[date_var] = pd.to_datetime(df[date_var], errors='coerce')
+df['Year'] = df[date_var].dt.year
+year_counts = df['Year'].value_counts().sort_index()
+
+# Save plot
+plt.figure(figsize=(10, 6))
+year_counts.plot(kind='bar')
+plt.title("M&A Announcements per Year")
+plt.xlabel("Year")
+plt.ylabel("Count")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig(os.path.join(out_dir, "MA_announced_by_year.png"))
+plt.close()
+
+# Save year counts to Excel
+year_counts.to_frame(name="M&A Count").to_excel(os.path.join(out_dir, "MA_announced_by_year.xlsx"))
+
+
+
 print("We done.")
+
+
