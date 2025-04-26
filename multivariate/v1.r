@@ -127,5 +127,3 @@ se_list <- list(
 stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim, 
           type = "text", title = "Regression Results",
           se = se_list)
-
-head(df)
