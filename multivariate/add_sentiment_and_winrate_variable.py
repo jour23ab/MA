@@ -21,7 +21,7 @@ print("Working directory set to:", os.getcwd())
 
 
 # Reading the Excel files
-filsti = f"{ma_dir}/data/processed/CAR_v5.xlsx"
+filsti = f"{ma_dir}/data/final/Final_CAR_analysis_ready_1_with_target_type.xlsx"
 df = pd.read_excel(filsti)
 
 inv_sentiment_sti = f"{ma_dir}/data/processed/sentiment.xls"
@@ -86,7 +86,7 @@ def count_recent_mergers(group):
     dates = group['M&A Announced Date'].tolist()
     counts = []
     for i, current_date in enumerate(dates):
-        five_years_ago = current_date - pd.Timedelta(days=1825-365*4)
+        five_years_ago = current_date - pd.Timedelta(days=1825-365*2)
         prior_dates = dates[:i]
         count = sum((d >= five_years_ago) and (d < current_date) for d in prior_dates)
         counts.append(count)
@@ -279,5 +279,5 @@ print(merged_df)
 
 
 # Save result
-output = f"{ma_dir}/data/processed/CAR_v5_extra_vars.xlsx"
+output = f"{ma_dir}/data/final/FINAL_CAR_extra_vars.xlsx"
 merged_df.to_excel(output, index=False)
