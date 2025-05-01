@@ -128,10 +128,6 @@ stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim,
           type = "text", title = "Regression Results",
           se = se_list)
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis")
 for(var in binary_vars) {
   cat("\n\n", var, "\n")

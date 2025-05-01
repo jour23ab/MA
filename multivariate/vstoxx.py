@@ -48,12 +48,7 @@ def calculate_ema(data, column="Index", days=7, smoothing=2):
 
     Returns:
     - DataFrame with EMA values
-<<<<<<< Updated upstream
     This function is manually computed, but is the same as pandas' built-in function pd.Series.ewm().
-=======
-
-    Formula retrieved from https://www.investopedia.com/terms/e/ema.asp
->>>>>>> Stashed changes
     """
     # Calculate the smoothing multiplier
     multiplier = smoothing / (1 + days)
