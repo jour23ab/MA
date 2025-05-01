@@ -93,7 +93,7 @@ df$CommonEquity <- as.numeric(df$`Acquirer LTM Financials - Total Common Equity 
 df$PreferredEquity <- as.numeric(df$`Acquirer LTM Financials - Total Preferred (at Announcement) (€EURmm, Historical rate)`)
 df$MinorityInterest <- as.numeric(df$`Acquirer LTM Financials - Minority Interest (at Announcement) (€EURmm, Historical rate)`)
 df$MarketCap <- as.numeric(df$`Acquirer Market Cap 1-Day Prior (€EURmm, Historical rate)`)
-df$Cash_and_Equivalents <- as.numeric(df$`Acquirer LTM Financials - Total Cash & ST Investments (at Announcement) (€EURmm, Historical rate)`)
+df$CashAndEquivalents <- as.numeric(df$`Acquirer LTM Financials - Total Cash & ST Investments (at Announcement) (€EURmm, Historical rate)`)
 df$Size <- as.numeric(df$`Total Transaction Value (€EURmm, Historical rate)`)
 df$debt_lag1_tgt <- as.numeric(df$`debt_lag1_tgt`)
 df$BookEquity <- rowSums(
@@ -107,14 +107,33 @@ df <- df %>%
     DtoE = ifelse(BookEquity != 0, Debt / BookEquity, NA)
   )
 
+###Removing observations
+#Removing Target type unknown since we need target firm observations to be either public or private
+# Removing unknown method of payment since we only have 1 observation.
+df <- df %>%
+  filter(`Target Type` != "Unknown",
+         `Unknown` != 1)
+
+#Renaming variables
+df <- df %>%
+  rename(
+    BullBearSpread = `Bull_Bear_Spread`,
+    PCP10 = `running_positive_CAR_percentage_10`,
+    PCP7 = `running_positive_CAR_percentage_7`,
+    PCP5 = `running_positive_CAR_percentage_5`,
+    PCP3 = `running_positive_CAR_percentage_3`,
+    PCP1 = `running_positive_CAR_percentage_1`,
+    GDPG = `gdp_lag1_tgt`,
+  )
+
 #Testing different relative ratios
 df$StoMC = df$Size / df$MarketCap
-df$StoE = df$Size / df$BookEquity
-df$StoC = df$Size / df$Cash_and_Equivalents
+#df$StoE = df$Size / df$BookEquity
+df$StoC = df$Size / df$CashAndEquivalents
 
 #Reformatting from million to billion
 df$Size = df$Size / 1000
-df$Cash_and_Equivalents = df$Cash_and_Equivalents / 1000
+df$CashAndEquivalents = df$CashAndEquivalents / 1000
 df$TotalAssets = df$TotalAssets / 1000
 
 #Creating more control variables
@@ -153,44 +172,51 @@ df$Crisis <- sapply(df$AnnouncementDate, is_in_crisis, intervals = crisis_period
 df$Crisis <- as.integer(df$Crisis)  # convert TRUE/FALSE to 1/0
 
 #Correlation matrix to make sure that the variables look correct
-vars <- c("Cash", "Private", "CrossBorder", 
-"Diversification", "MtoB", "Crisis", "Margin", "DtoE", "Hybrid", 
-"Stock", "Size", "Cash_and_Equivalents", "TotalAssets", "TargetAsset", 
-"TargetEquity", "Public", "Unknown", "StoMC", "StoE", "StoC", 
-"TS_Consumer_Discretionary", "TS_Consumer_Staples", "TS_Financials", 
-"TS_Health_Care", "TS_Industrials", "TS_Information_Technology", 
-"TS_Materials", "TS_Real_Estate", "Bull_Bear_Spread", 
-"running_positive_CAR_percentage_10", "num_prior_mergers", "gdp_lag1_tgt", "debt_lag1_tgt")
+vars <- c("Cash", "Private", "CrossBorder", "Diversification",
+          "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
+          "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
 cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
 corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
+
+#Subsetting the data to remove NA values in specified columns
+df <- df %>%
+  filter(if_all(c("[-10, 10]", "[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]", 
+                  "Cash", "Private", "CrossBorder", "Diversification", "MtoB", 
+                  "Crisis", "PCP10", "PCP7", "PCP5", "PCP3", "PCP1", "GDPG", 
+                  "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", 
+                  "TargetAsset", "Public", "BullBearSpread"),
+                ~ !is.na(.)))
+
+#Printing the number of observations for binary variables
+#for (var in c("Cash", "Private", "CrossBorder", "Diversification", "Crisis")) {
+# cat(var, ": ", sum(df[[var]]), "\n")
+#}
 
 #Checking correlations of independent variables with some regressors
 vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]",
-"Cash", "Private", "CrossBorder", "Diversification", "MtoB", "Crisis", 
-"Margin", "DtoE", "Hybrid", "Stock", "Size", "Cash_and_Equivalents", 
-"TotalAssets", "TargetAsset", "TargetEquity", "Public", "Unknown", 
-"StoMC", "StoE", "StoC", "TS_Consumer_Discretionary", 
-"TS_Consumer_Staples", "TS_Financials", "TS_Health_Care", 
-"TS_Industrials", "TS_Information_Technology", "TS_Materials", 
-"TS_Real_Estate", "Bull_Bear_Spread", "running_positive_CAR_percentage_10", "num_prior_mergers",
-"gdp_lag1_tgt", "debt_lag1_tgt")
+          "Cash", "Private", "CrossBorder", "Diversification",
+          "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
+          "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
 cor_matrix <- cor(df_subset, use = "pairwise.complete.obs")
 corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex = 0.5, addCoef.col = "black")
-
-#Removing observations due to some error.
-# df <- df %>%
-#   filter(Asset != 1)
-df <- df %>%
-  filter(`Target Type` != "Unknown")
 
 load_clean_data <- function() {
   return(df)
 }
+
+library(openxlsx)
+
+# Define path
+excel_path <- file.path(dirname(current_dir), "data/final", "data_prepped_FINAL_CAR_gpdg_pcp.xlsx")
+
+# Write DataFrame to Excel
+df <- df[!is.na(df[["[-10, 10]"]]), ]
+write.xlsx(df, file = excel_path)

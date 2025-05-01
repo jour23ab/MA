@@ -270,6 +270,10 @@ merged_df = merged_df.drop(columns=['Year', 'Country'])
 #debt_df("no data", np.nan, inplace=True)
 print(merged_df)
 
+print(f"Rows before: {len(merged_df)}")
+merged_df = merged_df.drop_duplicates(subset=["Sheet Name"])
+merged_df = merged_df.dropna(subset=["[-10, 10]"])
+print(f"Rows after: {len(merged_df)}")
 
 
 
@@ -279,5 +283,5 @@ print(merged_df)
 
 
 # Save result
-output = f"{ma_dir}/data/final/FINAL_CAR_extra_vars.xlsx"
+output = f"{ma_dir}/data/final/FINAL_CAR_with_gpdg_pcp.xlsx"
 merged_df.to_excel(output, index=False)
