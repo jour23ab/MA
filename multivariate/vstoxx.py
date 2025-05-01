@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from setuptools.config.expand import read_files
 
 #Define the URL for the VSTOXX data
-url = "https://www.stoxx.com/document/Indices/Current/HistoricalData/h_v2tx.txt"
+url = "https://www.stoxx.com/document/Indices/Current/HistoricalData/h_v2tx.txt" 
+
 
 # Download the file content
 response = requests.get(url)
@@ -15,16 +16,12 @@ file_path = "VSTOXX_data.txt"
 with open(file_path, "w", encoding="utf-8") as file:
     file.write(data)
 
-# Load the data into a Pandas DataFrame
-df = pd.read_csv(file_path, sep=";", skiprows=4)  # Adjust separator and skip initial rows if needed
+# Load the data
+df = pd.read_csv(file_path, sep=";", skiprows=4)
 
-# Save it as an Excel file
 df.to_excel("VSTOXX_data.xlsx", index=False)
 
-# Save it as a CSV file
 df.to_csv("VSTOXX_data.csv", index=False)
-
-print("Data successfully downloaded and saved as Excel and CSV!")
 
 # Load dataset
 file_path = "C:/Users/johan/Documents/Documents/Universitet/5. år MSc/Repository/Thesis/VSTOXX_data.csv"
@@ -33,12 +30,12 @@ df = pd.read_csv(file_path, names=colnames, parse_dates=["Date"])  # Ensure Date
 
 # Set Date as the index
 df.set_index("Date", inplace=True)
-df.index = pd.to_datetime(df.index, format="%d.%m.%Y")  # Adjust format to match day.month.year
+df.index = pd.to_datetime(df.index, format="%d.%m.%Y")
 #df_reformatted= df.resample("ME").last()
 df_reformatted = df
 
 
-# Define function to calculate EMA using the given formula
+# Define function to calculate EMA
 def calculate_ema(data, column="Index", days=7, smoothing=2):
     """
     Calculate the Exponential Moving Average (EMA) for a given DataFrame column.
@@ -51,6 +48,7 @@ def calculate_ema(data, column="Index", days=7, smoothing=2):
 
     Returns:
     - DataFrame with EMA values
+    This function is manually computed, but is the same as pandas' built-in function pd.Series.ewm().
     """
     # Calculate the smoothing multiplier
     multiplier = smoothing / (1 + days)
@@ -97,22 +95,20 @@ print(df_reformatted)
 breach_dates = df_reformatted[df_reformatted["EMA"] > threshold].index
 print("Dates when VSTOXX breached the threshold of 25:", breach_dates)
 
-# Example: breach_dates is your list of dates (DatetimeIndex or Series)
 # Ensure the dates are sorted
 breach_dates = breach_dates.sort_values()
 
 # Convert to Series to calculate differences
 breach_series = pd.Series(breach_dates)
 
-# Identify breaks in consecutive months
+# Identify breaks in consecutive months and creating new group if the gap is more than one month
 month_diff = breach_series.diff().dt.days.fillna(0)
-group_id = (month_diff > 31).cumsum()  # New group if the gap is more than one month
+group_id = (month_diff > 31).cumsum()
 
 # Group by these break points and extract intervals
 intervals = breach_series.groupby(group_id).agg(['min', 'max'])
 
-# Rename
+# Renaming
 intervals.columns = ['Start', 'End']
 
-# Display
 print(intervals)

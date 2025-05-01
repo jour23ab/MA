@@ -128,6 +128,44 @@ stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim,
           type = "text", title = "Regression Results",
           se = se_list)
 
+binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis")
+for(var in binary_vars) {
+  cat("\n\n", var, "\n")
+  print(table(df[[var]]))
+}
+for (var in binary_vars) {
+  cat("\n\n", var, "\n")
+  print(table(df_10[[var]]))
+}
+
+
+### Sensemakr sensitivity analysis
+# Load the required libraries
+#install.packages("sensemakr")
+library(sensemakr)
+
+#Checking partial r^2 for the model to determine the benchmark covariates
+partial_r2 <- partial_r2(model1)
+print(partial_r2)
+
+#setting the benchmark covariates
+benchmark_covariates <- "CashAndEquivalents"
+kd = c(20, 35, 50) #setting the kd values for the unobserved confounding effects which are based on the size of the benchmark covariates/group.
+
+# Sensitivity analysis for Cash variable in model1
+cash_sensemakr <- sensemakr(model = model1, 
+  treatment = "Cash",
+  benchmark_covariates = benchmark_covariates,
+  kd = kd,
+)
+
+# Summary of the sensitivity analysis
+summary(cash_sensemakr)
+ovb_minimal_reporting(cash_sensemakr) #For latex output
+
+# Plotting the sensitivity contours
+plot(cash_sensemakr)
+
 library(writexl)
 
 df_used_model1 <- model1_trim$model
@@ -136,3 +174,4 @@ df_used_model1 <- model1_trim$model
 excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_data.xlsx")
 
 write_xlsx(df_used_model1, path = excel_path)
+
