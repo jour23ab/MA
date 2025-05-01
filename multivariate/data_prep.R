@@ -194,12 +194,3 @@ df <- df %>%
 load_clean_data <- function() {
   return(df)
 }
-
-# write the cleaned file
-library(openxlsx)
-
-# Define pathx
-excel_path <- file.path(dirname(current_dir), "data/final/", "data_prepped_FINAL_CAR_with_cleaned_gpdg_pcp.xlsx")
-
-# Write dataframe (e.g., df) to the Excel file
-write.xlsx(df, file = excel_path)
