@@ -33,19 +33,19 @@ model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB +
 
 # Trimming to remove the bottom 1% and top 1% CARs - dropping outliers
 df_10 <- df[df$`[-10, 10]` >= quantile(df$`[-10, 10]`, 0.01, na.rm = TRUE) & 
-            df$`[-10, 10]` <= quantile(df$`[-10, 10]`, 0.99, na.rm = TRUE), ]
+              df$`[-10, 10]` <= quantile(df$`[-10, 10]`, 0.99, na.rm = TRUE), ]
 
 df_7 <- df[df$`[-7, 7]` >= quantile(df$`[-7, 7]`, 0.01, na.rm = TRUE) & 
-           df$`[-7, 7]` <= quantile(df$`[-7, 7]`, 0.99, na.rm = TRUE), ]
+             df$`[-7, 7]` <= quantile(df$`[-7, 7]`, 0.99, na.rm = TRUE), ]
 
 df_5 <- df[df$`[-5, 5]` >= quantile(df$`[-5, 5]`, 0.01, na.rm = TRUE) & 
-           df$`[-5, 5]` <= quantile(df$`[-5, 5]`, 0.99, na.rm = TRUE), ]
+             df$`[-5, 5]` <= quantile(df$`[-5, 5]`, 0.99, na.rm = TRUE), ]
 
 df_3 <- df[df$`[-3, 3]` >= quantile(df$`[-3, 3]`, 0.01, na.rm = TRUE) & 
-           df$`[-3, 3]` <= quantile(df$`[-3, 3]`, 0.99, na.rm = TRUE), ]
+             df$`[-3, 3]` <= quantile(df$`[-3, 3]`, 0.99, na.rm = TRUE), ]
 
 df_1 <- df[df$`[-1, 1]` >= quantile(df$`[-1, 1]`, 0.01, na.rm = TRUE) & 
-           df$`[-1, 1]` <= quantile(df$`[-1, 1]`, 0.99, na.rm = TRUE), ]
+             df$`[-1, 1]` <= quantile(df$`[-1, 1]`, 0.99, na.rm = TRUE), ]
 
 # Run models on trimmed data
 model1_trim <- lm(`[-10, 10]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP10 +
@@ -128,10 +128,6 @@ stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim,
           type = "text", title = "Regression Results",
           se = se_list)
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis")
 for(var in binary_vars) {
   cat("\n\n", var, "\n")
@@ -169,4 +165,13 @@ ovb_minimal_reporting(cash_sensemakr) #For latex output
 
 # Plotting the sensitivity contours
 plot(cash_sensemakr)
+
+library(writexl)
+
+df_used_model1 <- model1_trim$model
+
+# Define path
+excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_data.xlsx")
+
+write_xlsx(df_used_model1, path = excel_path)
 
