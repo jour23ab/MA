@@ -51,6 +51,7 @@ def calculate_ema(data, column="Index", days=7, smoothing=2):
 
     Returns:
     - DataFrame with EMA values
+    This function is manually computed, but is the same as pandas' built-in function pd.Series.ewm().
     """
     # Calculate the smoothing multiplier
     multiplier = smoothing / (1 + days)
@@ -104,9 +105,9 @@ breach_dates = breach_dates.sort_values()
 # Convert to Series to calculate differences
 breach_series = pd.Series(breach_dates)
 
-# Identify breaks in consecutive months
+# Identify breaks in consecutive months and new group if the gap is more than 31 days
 month_diff = breach_series.diff().dt.days.fillna(0)
-group_id = (month_diff > 31).cumsum()  # New group if the gap is more than one month
+group_id = (month_diff > 31).cumsum()
 
 # Group by these break points and extract intervals
 intervals = breach_series.groupby(group_id).agg(['min', 'max'])
