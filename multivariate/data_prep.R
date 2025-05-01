@@ -59,7 +59,7 @@ print(getwd())
 #data=read_xlsx("CAR_v2.xlsx")
 
 # Load Excel file from sibling folder 'dataprocessed'
-excel_path <- file.path(dirname(current_dir), "data/processed/", "CAR_v5_extra_vars.xlsx")
+excel_path <- file.path(dirname(current_dir), "data/final/", "FINAL_CAR_with_gpdg_pcp.xlsx")
 data <- read_xlsx(excel_path)
 
 #Creating variables
@@ -176,6 +176,7 @@ vars <- c("Cash", "Private", "CrossBorder", "Diversification",
 "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
 "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
 
+
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
@@ -202,6 +203,7 @@ vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]",
 "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
 "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
 
+
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
 df_subset = df_subset[sapply(df_subset, is.numeric)]
@@ -211,3 +213,13 @@ corrplot(cor_matrix, method = "color", type = "lower", tl.cex = 0.5, number.cex 
 load_clean_data <- function() {
   return(df)
 }
+
+library(openxlsx)
+
+# Define path
+excel_path <- file.path(dirname(current_dir), "data/final", "data_prepped_FINAL_CAR_gpdg_pcp.xlsx")
+
+# Write DataFrame to Excel
+df <- df[!is.na(df[["[-10, 10]"]]), ]
+write.xlsx(df, file = excel_path)
+
