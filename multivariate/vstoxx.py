@@ -81,11 +81,11 @@ threshold = 25
 
 # Plot the EMA alongside the original data
 plt.figure(figsize=(12, 6))
-plt.plot(df_reformatted.index, df_reformatted["Index"], label="VSTOXX Monthly", color="blue", linewidth=2)
-plt.plot(df_reformatted.index, df_reformatted["EMA"], label="6-Month EMA", color="red", linestyle="dashed", linewidth=2)
+plt.plot(df_reformatted.index, df_reformatted["Index"], label="VSTOXX Daily", color="blue", linewidth=2)
+plt.plot(df_reformatted.index, df_reformatted["EMA"], label="100-day EMA", color="red", linestyle="dashed", linewidth=2)
 plt.axhline(y=threshold, color='g', label="Threshold", linestyle='-')
 # Formatting the plot
-plt.title("VSTOXX & 6-Month EMA", fontsize=14)
+plt.title("VSTOXX & EMA", fontsize=14)
 plt.xlabel("Year", fontsize=12)
 plt.ylabel("Index Value", fontsize=12)
 plt.legend()

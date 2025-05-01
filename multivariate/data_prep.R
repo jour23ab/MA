@@ -173,8 +173,9 @@ df$Crisis <- as.integer(df$Crisis)  # convert TRUE/FALSE to 1/0
 
 #Correlation matrix to make sure that the variables look correct
 vars <- c("Cash", "Private", "CrossBorder", "Diversification",
-          "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
-          "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
+"MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
+"Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
+
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
@@ -193,14 +194,15 @@ df <- df %>%
 
 #Printing the number of observations for binary variables
 #for (var in c("Cash", "Private", "CrossBorder", "Diversification", "Crisis")) {
-# cat(var, ": ", sum(df[[var]]), "\n")
+ # cat(var, ": ", sum(df[[var]]), "\n")
 #}
 
 #Checking correlations of independent variables with some regressors
 vars <- c("[-10, 10]","[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]",
-          "Cash", "Private", "CrossBorder", "Diversification",
-          "MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
-          "Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
+"Cash", "Private", "CrossBorder", "Diversification",
+"MtoB", "Crisis", "PCP10", "PCP7", "PCP3", "PCP1", "GDPG",
+"Margin", "DtoE", "Hybrid", "Stock", "Size", "CashAndEquivalents", "TargetAsset", "Public", "BullBearSpread")
+
 
 setdiff(vars, colnames(df))
 df_subset = df[, vars]
@@ -220,3 +222,4 @@ excel_path <- file.path(dirname(current_dir), "data/final", "data_prepped_FINAL_
 # Write DataFrame to Excel
 df <- df[!is.na(df[["[-10, 10]"]]), ]
 write.xlsx(df, file = excel_path)
+
