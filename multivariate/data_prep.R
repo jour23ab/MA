@@ -59,7 +59,7 @@ print(getwd())
 #data=read_xlsx("CAR_v2.xlsx")
 
 # Load Excel file from sibling folder 'dataprocessed'
-excel_path <- file.path(dirname(current_dir), "data/processed/", "CAR_v5_extra_vars.xlsx")
+excel_path <- file.path(dirname(current_dir), "data/final/", "FINAL_CAR_with_gpdg_pcp.xlsx")
 data <- read_xlsx(excel_path)
 
 #Creating variables
@@ -195,4 +195,11 @@ load_clean_data <- function() {
   return(df)
 }
 
+# write the cleaned file
+library(openxlsx)
 
+# Define pathx
+excel_path <- file.path(dirname(current_dir), "data/final/", "data_prepped_FINAL_CAR_with_cleaned_gpdg_pcp.xlsx")
+
+# Write dataframe (e.g., df) to the Excel file
+write.xlsx(df, file = excel_path)
