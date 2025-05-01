@@ -59,7 +59,9 @@ print(getwd())
 #data=read_xlsx("CAR_v2.xlsx")
 
 # Load Excel file from sibling folder 'dataprocessed'
-excel_path <- file.path(dirname(current_dir), "data/processed/", "CAR_v5_extra_vars.xlsx")
+#excel_path <- file.path(dirname(current_dir), "data/processed/", "CAR_v5_extra_vars.xlsx")
+excel_path <- file.path(dirname(current_dir), "data/processed/", "FINAL_CAR_with_gpdg_pcp.xlsx")
+
 data <- read_xlsx(excel_path)
 
 #Creating variables
