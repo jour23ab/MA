@@ -67,7 +67,7 @@ class PlotGenerator:
 # Setup directories
 current_dir = os.path.dirname(os.path.abspath(__file__))
 ma_dir = os.path.dirname(current_dir)
-filsti = os.path.join(ma_dir, "data", "processed", "CAR_v5_extra_vars_cleaned.xlsx")
+filsti = os.path.join(ma_dir, "data", "final", "graph_data.xlsx")
 out_dir = os.path.join(ma_dir, "Descriptive Statistics", "Categorical")
 
 # Load data
