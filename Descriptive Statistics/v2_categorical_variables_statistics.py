@@ -89,45 +89,51 @@ categorical_vars = [
 # Define custom plot labels (example)
 custom_plot_labels = {
     "Primary Sector [Target/Issuer]": {
-        "title": "Distribution of Target's Primary Sector",
-        "xlabel": "Target Sector",
-        "ylabel": "Number of Deals"
+        "title": "Sector Distribution of Target Firms",
+        "xlabel": "Primary Sector",
+        "ylabel": "Number of M&A Deals"
     },
     "Geographic Locations [Buyers/Investors]": {
-        "title": "Distribution of Country of Buyer",
-        "xlabel": "Buyer Sector",
-        "ylabel": "Number of Deals"
+        "title": "Geographic Distribution of Acquirers",
+        "xlabel": "Acquirer's Country",
+        "ylabel": "Number of M&A Deals"
     },
     "Geographic Locations [Target/Issuer]": {
-        "title": "Distribution of Country of Target",
-        "xlabel": "Target Sector",
-        "ylabel": "Number of Deals"
+        "title": "Geographic Distribution of Targets",
+        "xlabel": "Target's Country",
+        "ylabel": "Number of M&A Deals"
     },
     "Target Type": {
         "title": "Distribution by Target Type",
         "xlabel": "Target Type",
-        "ylabel": "Deal Count",
+        "ylabel": "Number of M&A Deals",
         "legend_labels": {"public": "Public", "private": "Private"}
     },
     "Diversification": {
-        "title": "Distribution of Conglomerate vs. Non-conglomerate",
+        "title": "Distribution of Diversifying vs. Focused M&As",
         "xlabel": "Deal Type",
-        "ylabel": "Number of Deals",
-        "legend_labels": {0: "Non-conglomerate", 1: "Conglomerate"}
+        "ylabel": "Number of M&A Deals",
+        "legend_labels": {0: "Focused", 1: "Diversifying"}
     },
     "CrossBorder": {
-        "title": "Distribution of Cross-Border vs. Domestic Deals",
+        "title": "Distribution of Domestic vs. Cross-Border M&As",
         "xlabel": "Deal Type",
-        "ylabel": "Number of Deals",
+        "ylabel": "Number of M&A Deals",
         "legend_labels": {0: "Domestic", 1: "Cross-Border"}
     },
     "Crisis": {
-        "title": "Distribution of Crisis vs. Non-Crisis",
-        "xlabel": "Deal Type",
-        "ylabel": "Number of Deals",
+        "title": "Distribution of M&As During and Outside Crisis Periods",
+        "xlabel": "Period",
+        "ylabel": "Number of M&A Deals",
         "legend_labels": {0: "Non-Crisis", 1: "Crisis"}
     },
-}    
+    "Consideration Offered": {
+        "title": "Distribution of Deal Payment Methods",
+        "xlabel": "Consideration Type",
+        "ylabel": "Number of M&A Deals"
+    }
+}
+
 
 # Create and run plot generator
 generator = PlotGenerator(df, categorical_vars, out_dir, custom_plot_labels)
