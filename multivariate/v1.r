@@ -197,3 +197,18 @@ excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_da
 
 write_xlsx(df_used_model1, path = excel_path)
 
+
+
+
+
+
+
+
+
+library(texreg)
+
+screenreg(list(model1, model2, model3, model4, model5),
+          digits = 3, stars = c(0.01, 0.05, 0.1))
+
+
+
