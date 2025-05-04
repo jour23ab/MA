@@ -6,7 +6,27 @@ source("data_prep.R")
 df <- load_clean_data()
 
 #Creating the Crisis variable based on the provided intervals from the vstoxx sensitivity analysis
-#50 EMA and 25 threshold. Responsive.
+#100EMA and 22 threshold. Loose.
+'crisis_periods = list(
+  c(as.Date("2008-01-22"), as.Date("2012-12-06")),
+  c(as.Date("2015-01-20"), as.Date("2015-03-04")),
+  c(as.Date("2015-06-12"), as.Date("2016-10-04")),
+  c(as.Date("2020-03-16"), as.Date("2021-03-30")),
+  c(as.Date("2022-02-08"), as.Date("2023-01-30"))
+)'
+
+#100 EMA and 27 threshold. Strict.
+'crisis_periods = list(
+  c(as.Date("2008-10-02"), as.Date("2010-01-05")),
+  c(as.Date("2010-05-18"), as.Date("2010-10-13")),
+  c(as.Date("2011-08-16"), as.Date("2012-08-14")),
+  c(as.Date("2016-02-11"), as.Date("2016-03-22")),
+  c(as.Date("2020-03-20"), as.Date("2020-11-20")),
+  c(as.Date("2022-03-11"), as.Date("2022-08-11")),
+  c(as.Date("2022-09-29"), as.Date("2022-11-09"))
+)'
+
+#50 EMA and 25 threshold. Reactive.
 'crisis_periods = list(
   c(as.Date("2008-01-30"), as.Date("2008-05-02")),
   c(as.Date("2008-09-17"), as.Date("2010-03-08")),
@@ -19,7 +39,7 @@ df <- load_clean_data()
   c(as.Date("2022-02-23"), as.Date("2022-11-22"))
 )'
 #150 EMA and 25 threshold. Smoother.
-'crisis_periods = list(
+crisis_periods = list(
   c(as.Date("2008-03-17"), as.Date("2008-04-28")),
   c(as.Date("2008-09-24"), as.Date("2011-01-10")),
   c(as.Date("2011-08-10"), as.Date("2012-10-30")),
@@ -27,26 +47,7 @@ df <- load_clean_data()
   c(as.Date("2016-01-18"), as.Date("2016-08-09")),
   c(as.Date("2020-03-26"), as.Date("2021-02-04")),
   c(as.Date("2022-03-10"), as.Date("2022-12-20"))
-)'
-#100 EMA and 27 threshold. Strict.
-crisis_periods = list(
-  c(as.Date("2008-10-02"), as.Date("2010-01-05")),
-  c(as.Date("2010-05-18"), as.Date("2010-10-13")),
-  c(as.Date("2011-08-16"), as.Date("2012-08-14")),
-  c(as.Date("2016-02-11"), as.Date("2016-03-22")),
-  c(as.Date("2020-03-20"), as.Date("2020-11-20")),
-  c(as.Date("2022-03-11"), as.Date("2022-08-11")),
-  c(as.Date("2022-09-29"), as.Date("2022-11-09"))
 )
-
-#100EMA and 22 threshold. Loose.
-'crisis_periods = list(
-  c(as.Date("2008-01-22"), as.Date("2012-12-06")),
-  c(as.Date("2015-01-20"), as.Date("2015-03-04")),
-  c(as.Date("2015-06-12"), as.Date("2016-10-04")),
-  c(as.Date("2020-03-16"), as.Date("2021-03-30")),
-  c(as.Date("2022-02-08"), as.Date("2023-01-30"))
-)'
 
 df$AnnouncementDate <- as.Date(df$`M&A Announced Date`)
 is_in_crisis <- function(date, intervals) {
