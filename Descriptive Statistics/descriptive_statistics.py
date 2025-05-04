@@ -4,7 +4,7 @@ import pandas as pd
 # Define variables in structured order
 ordered_vars = [
     # CARs
-    '[-1, 1]', '[-3, 3]', '[-5, 5]', '[-7, 7]', '[-10, 10]',
+    '[-1, 1]', '[-3, 3]', '[-5, 5]', '[-7, 7]', 'CAR_10_wins',
     
     # Deal info
     'Total Transaction Value (€EURmm, Historical rate)',
@@ -38,7 +38,7 @@ variable_names = {
     '[-3, 3]': '3-day CAR',
     '[-5, 5]': '5-day CAR',
     '[-7, 7]': '7-day CAR',
-    '[-10, 10]': '10-day CAR',
+    'CAR_10_wins': '10-day CAR',
     'Total Transaction Value (€EURmm, Historical rate)': 'Deal value (EUR million)',
     'Acquirer LTM Financials - Total Revenue (at Announcement) (€EURmm, Historical rate)': 'Acquirer revenue',
     'Acquirer LTM Financials - EBITDA (at Announcement) (€EURmm, Historical rate)': 'Acquirer EBITDA',
@@ -77,7 +77,7 @@ ma_dir = os.path.dirname(current_dir)
 os.chdir(ma_dir)
 
 # Load data
-filsti = os.path.join(ma_dir, "data", "processed", "CAR_v5_extra_vars_cleaned.xlsx")
+filsti = os.path.join(ma_dir, "data", "final", "graph_data.xlsx")
 df = pd.read_excel(filsti)
 
 # Create descriptive stats
