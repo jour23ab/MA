@@ -137,6 +137,7 @@ df$StoC = df$Size / df$CashAndEquivalents
 df$Size = df$Size / 1000
 df$CashAndEquivalents = df$CashAndEquivalents / 1000
 df$TotalAssets = df$TotalAssets / 1000
+df$MarketCap = df$MarketCap / 1000
 
 #Creating more control variables
 df$Margin = df$EBITDA / df$Revenue

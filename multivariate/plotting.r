@@ -188,8 +188,14 @@ ggplot(df, aes(x = CAR_10_wins, fill = factor(Crisis))) +
   xlim(-10, 10) +
   theme_minimal()
 
+### Firm and Deal Characteristics Sensitivity Analysis Plotting
+ggplot(df, aes(x = MtoB)) +
+  geom_density(fill = "steelblue", alpha = 0.4, adjust = 1.5) +
+  labs(title = "Density Plot of Acquirer Market-to-Book Ratio",
+       x = "Market-to-Book",
+       y = "Density") +
+  theme_minimal()
 #Plotting CARs by the 50-50 split in MtoB
-# Create MtoB category variable (e.g., tertiles)
 df$MtoB_group <- cut(df$MtoB,
                      breaks = quantile(df$MtoB, probs = c(0, 1/3, 2/3, 1), na.rm = TRUE),
                      labels = c("Low", "Medium", "High"),
