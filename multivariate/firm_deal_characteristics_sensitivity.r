@@ -9,7 +9,7 @@ df <- load_clean_data()
 
 # Define variables of interest
 vars_to_check <- c("MtoB", "Size", "Margin", "MarketCap", "DtoE")
-
+df$MarketCap <- df$MarketCap / 1000 #Convert to Billions
 #1. Summary Statistics + Quantiles
 summary_stats <- df %>%
   select(all_of(vars_to_check)) %>%
@@ -42,7 +42,6 @@ print(quantile_stats)
 print(central_stats)
 
 #2. Boxplots for Visual Outlier Detection
-df$MarketCap <- df$MarketCap / 1000 #Convert to Trillions of Euros just for the plots
 # MtoB
 ggplot(df, aes(y = MtoB)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
@@ -64,7 +63,7 @@ ggplot(df, aes(y = Margin)) +
 # MarketCap
 ggplot(df, aes(y = MarketCap)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
-  labs(title = "Boxplot of Market Cap", y = "Market Cap (Trillions)") +
+  labs(title = "Boxplot of Market Cap", y = "Market Cap (Billions)") +
   theme_minimal()
 
 # DtoE
@@ -98,7 +97,7 @@ ggplot(df, aes(x = Margin)) +
 
 ggplot(df, aes(x = MarketCap)) +
   geom_density(fill = "steelblue", alpha = 0.4, adjust = 1.5) +
-  labs(title = "Density Plot of Market Cap (trillions)",
+  labs(title = "Density Plot of Market Cap (Brillions)",
        x = "Market Cap",
        y = "Density") +
   theme_minimal()
@@ -161,7 +160,6 @@ clean_outliers_trimmed <- function(data) {
 df_trimmed <- clean_outliers_trimmed(df)
 #summary of df_trimmed
 
-df_trimmed$MarketCap <- df_trimmed$MarketCap * 1000 #Convert to Trillions back to Billions for the regression
 df<- df_trimmed
 
 #Winsorization to remove the bottom 1% and top 99% CARs - capping outliers
@@ -200,7 +198,7 @@ se_list <- list(
 stargazer(model1, model2, model3,model4, model5, 
           type = "text", title = "Regression Results",
           se = se_list)
-
+1.036
 binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis", "TargetAsset")
 for(var in binary_vars) {
   cat("\n\n", var, "\n")

@@ -6,16 +6,38 @@ source("data_prep.R")
 df <- load_clean_data()
 
 #Creating the Crisis variable based on the provided intervals from the vstoxx sensitivity analysis
-#100EMA and 22 threshold. Loose.
+#100EMA and 23 threshold. Model A.
 'crisis_periods = list(
-  c(as.Date("2008-01-22"), as.Date("2012-12-06")),
-  c(as.Date("2015-01-20"), as.Date("2015-03-04")),
-  c(as.Date("2015-06-12"), as.Date("2016-10-04")),
-  c(as.Date("2020-03-16"), as.Date("2021-03-30")),
-  c(as.Date("2022-02-08"), as.Date("2023-01-30"))
+  c(as.Date("2008-01-25"), as.Date("2011-04-14")),
+  c(as.Date("2011-07-15"), as.Date("2012-11-23")),
+  c(as.Date("2015-06-30"), as.Date("2016-09-06")),
+  c(as.Date("2020-03-17"), as.Date("2021-03-15")),
+  c(as.Date("2022-02-22"), as.Date("2023-01-12"))
+)'
+'#100EMA and 24 threshold. Model B
+crisis_periods = list(
+  c(as.Date("2008-02-05"), as.Date("2008-05-23")),
+  c(as.Date("2008-07-11"), as.Date("2011-01-14")),
+  c(as.Date("2011-08-04"), as.Date("2012-10-25")),
+  c(as.Date("2015-08-31"), as.Date("2016-08-18")),
+  c(as.Date("2020-03-18"), as.Date("2021-02-11")),
+  c(as.Date("2022-02-28"), as.Date("2022-12-27"))
 )'
 
-#100 EMA and 27 threshold. Strict.
+'#100 EMA and 26 threshold. Model C
+crisis_periods = list(
+  c(as.Date("2008-03-10"), as.Date("2008-04-22")),
+  c(as.Date("2008-09-26"), as.Date("2010-03-04")),
+  c(as.Date("2010-05-12"), as.Date("2010-10-29")),
+  c(as.Date("2011-08-11"), as.Date("2012-09-13")),
+  c(as.Date("2015-08-31"), as.Date("2016-08-18")),
+  c(as.Date("2016-01-28"), as.Date("2016-04-18")),
+  c(as.Date("2016-06-20"), as.Date("2016-07-20")),
+  c(as.Date("2020-03-19"), as.Date("2020-12-04")),
+  c(as.Date("2022-03-08"), as.Date("2022-11-22"))
+)'
+
+#100 EMA and 27 threshold. Model D.
 'crisis_periods = list(
   c(as.Date("2008-10-02"), as.Date("2010-01-05")),
   c(as.Date("2010-05-18"), as.Date("2010-10-13")),
@@ -26,7 +48,7 @@ df <- load_clean_data()
   c(as.Date("2022-09-29"), as.Date("2022-11-09"))
 )'
 
-#50 EMA and 25 threshold. Reactive.
+#50 EMA and 25 threshold. Model E
 'crisis_periods = list(
   c(as.Date("2008-01-30"), as.Date("2008-05-02")),
   c(as.Date("2008-09-17"), as.Date("2010-03-08")),
@@ -38,8 +60,35 @@ df <- load_clean_data()
   c(as.Date("2020-03-12"), as.Date("2020-12-01")),
   c(as.Date("2022-02-23"), as.Date("2022-11-22"))
 )'
-#150 EMA and 25 threshold. Smoother.
+
+#75 EMA and 25 threshold. Model F.
 crisis_periods = list(
+  c(as.Date("2008-02-07"), as.Date("2008-05-07")),
+  c(as.Date("2008-09-18"), as.Date("2010-03-15")),
+  c(as.Date("2010-05-07"), as.Date("2010-12-09")),
+  c(as.Date("2011-08-08"), as.Date("2012-09-19")),
+  c(as.Date("2015-09-03"), as.Date("2015-11-05")),
+  c(as.Date("2016-01-14"), as.Date("2016-05-10")),
+  c(as.Date("2016-06-15"), as.Date("2016-07-29")),
+  c(as.Date("2020-03-16"), as.Date("2020-12-09")),
+  c(as.Date("2022-03-01"), as.Date("2022-11-29"))
+)
+
+#125EMA and 25 threshold. Model G.
+'crisis_periods = list(
+  c(as.Date("2008-03-05"), as.Date("2008-05-06")),
+  c(as.Date("2008-09-22"), as.Date("2010-04-01")),
+  c(as.Date("2010-05-05"), as.Date("2010-12-21")),
+  c(as.Date("2011-08-10"), as.Date("2012-10-15")),
+  c(as.Date("2015-09-15"), as.Date("2015-11-03")),
+  c(as.Date("2016-01-15"), as.Date("2016-08-08")),
+  c(as.Date("2020-03-23"), as.Date("2021-01-14")),
+  c(as.Date("2022-03-08"), as.Date("2022-12-14"))
+)'
+
+
+#150 EMA and 25 threshold. Model H.
+'crisis_periods = list(
   c(as.Date("2008-03-17"), as.Date("2008-04-28")),
   c(as.Date("2008-09-24"), as.Date("2011-01-10")),
   c(as.Date("2011-08-10"), as.Date("2012-10-30")),
@@ -47,7 +96,7 @@ crisis_periods = list(
   c(as.Date("2016-01-18"), as.Date("2016-08-09")),
   c(as.Date("2020-03-26"), as.Date("2021-02-04")),
   c(as.Date("2022-03-10"), as.Date("2022-12-20"))
-)
+)'
 
 df$AnnouncementDate <- as.Date(df$`M&A Announced Date`)
 is_in_crisis <- function(date, intervals) {
@@ -82,16 +131,6 @@ model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + Diversification + MtoB +
 model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP1 +
                 GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
-
-#models = list(
-#  model1,
-#  model2,
-#  model3,
-#  model4,
-#  model5
-#)
-#bp_results <- lapply(models, bptest)
-#bp_results
 
 #Extract robust standard errors
 se_list <- list(

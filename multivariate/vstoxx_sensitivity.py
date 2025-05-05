@@ -83,10 +83,14 @@ def identify_crisis_periods(data, ema_days=100, threshold=25, gap_days=31, min_c
 # Define parameter sets for testing
 specifications = {
     "Baseline (EMA 100, T=25)": {"ema_days": 100, "threshold": 25},
-    "Looser (EMA 100, T=22)": {"ema_days": 100, "threshold": 22},
-    "Stricter (EMA 100, T=27)": {"ema_days": 100, "threshold": 27},
-    "More Reactive (EMA 50, T=25)": {"ema_days": 50, "threshold": 25},
-    "Smoother (EMA 150, T=25)": {"ema_days": 150, "threshold": 25},
+    "Model A (EMA 100, T=23)": {"ema_days": 100, "threshold": 23},
+    "Model B (EMA 100, T=24)": {"ema_days": 100, "threshold": 24},
+    "Model C (EMA 100, T=26)": {"ema_days": 100, "threshold": 26},
+    "Model D (EMA 100, T=27)": {"ema_days": 100, "threshold": 27},
+    "Model E (EMA 50, T=25)": {"ema_days": 50, "threshold": 25},
+    "Model F (EMA 75, T=25)": {"ema_days": 75, "threshold": 25},
+    "Model G (EMA 125, T=25)": {"ema_days": 125, "threshold": 25},
+    "Model H (EMA 150, T=25)": {"ema_days": 150, "threshold": 25},
 }
 
 # Loop through and plot each configuration
