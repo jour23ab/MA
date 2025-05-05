@@ -124,6 +124,20 @@ stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim,
           se = se_list)
 
 
+#Counting observations in the winsorized and trimmed data
+binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis")
+
+# Print counts from the full dataframe
+for(var in binary_vars) {
+  cat("\n\n", var, "\n")
+  print(table(df[[var]]))
+}
+
+# Print counts from the subset dataframe
+for (var in binary_vars) {
+  cat("\n\n", var, "\n")
+  print(table(df_10[[var]]))
+}
 
 # === Save residual diagnostic plots for both winsorized and trimmed models ===
 
