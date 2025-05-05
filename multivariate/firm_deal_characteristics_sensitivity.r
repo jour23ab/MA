@@ -9,7 +9,7 @@ df <- load_clean_data()
 
 # Define variables of interest
 vars_to_check <- c("MtoB", "Size", "Margin", "MarketCap", "DtoE")
-
+df$MarketCap <- df$MarketCap / 1000 #Convert to trillions of Euros for easier interpretation
 #1. Summary Statistics + Quantiles
 summary_stats <- df %>%
   select(all_of(vars_to_check)) %>%
@@ -42,7 +42,7 @@ print(quantile_stats)
 print(central_stats)
 
 #2. Boxplots for Visual Outlier Detection
-df$MarketCap <- df$MarketCap / 1000 #Convert to Trillions of Euros just for the plots
+
 # MtoB
 ggplot(df, aes(y = MtoB)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
@@ -161,7 +161,7 @@ clean_outliers_trimmed <- function(data) {
 df_trimmed <- clean_outliers_trimmed(df)
 #summary of df_trimmed
 
-df_trimmed$MarketCap <- df_trimmed$MarketCap * 1000 #Convert to Trillions back to Billions for the regression
+df_trimmed$MarketCap <- df_trimmed$MarketCap * 1000 #Convert to Trillions back to Billions
 df<- df_trimmed
 
 #Winsorization to remove the bottom 1% and top 99% CARs - capping outliers
@@ -209,5 +209,5 @@ for(var in binary_vars) {
 
 #Export the trimmed dataframe with trimmed characteristics to Excel
 #Commmenting out so we don't overwrite the original data each time this script is run
-#excel_path <- file.path(dirname(current_dir), "data/final", "df_trimmed_characteristics.xlsx")
-#write.xlsx(df, file = excel_path)
+excel_path <- file.path(dirname(current_dir), "data/final", "df_trimmed_characteristics.xlsx")
+write.xlsx(df, file = excel_path)
