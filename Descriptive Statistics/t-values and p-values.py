@@ -52,8 +52,13 @@ data = {
     ]
 }
 
+import pandas as pd
+import numpy as np
 
 df = pd.DataFrame(data)
+
+# Replace None with np.nan
+df.replace({None: np.nan}, inplace=True)
 
 # Degrees of freedom
 dfs = {
@@ -64,22 +69,21 @@ dfs = {
     "CAR_1": 269
 }
 
-# Calculate stats for each model
+# Calculate t-stats and p-values
 for model, df_val in dfs.items():
     coef = df[f"{model}_Coef"]
     se = df[f"{model}_SE"]
     t_stat = coef / se
 
     df[f"{model}_t"] = t_stat
-    df[f"{model}_p_two_tailed"] = 2 * t.sf(abs(t_stat), df=df_val)
+    df[f"{model}_p_two_tailed"] = 2 * t.sf(np.abs(t_stat), df=df_val)
     df[f"{model}_p_right"] = t.sf(t_stat, df=df_val)
     df[f"{model}_p_left"] = t.cdf(t_stat, df=df_val)
 
 # Export to Excel
 output_path = os.path.join("Descriptive Statistics", "P-values and t-values/regression_results_corrected_values.xlsx")
+output_path = r"C:\Users\b407939\Downloads\regression pvalues.xlsx"
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 df.to_excel(output_path, index=False)
-
-output_path
 
 print("done")
