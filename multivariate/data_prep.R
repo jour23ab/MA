@@ -132,8 +132,8 @@ df <- df %>%
 df$StoMC = df$Size / df$MarketCap
 #df$StoE = df$Size / df$BookEquity
 df$StoC = df$Size / df$CashAndEquivalents
-
 #Reformatting from million to billion
+df$MarketCap = df$MarketCap / 1000
 df$Size = df$Size / 1000
 df$CashAndEquivalents = df$CashAndEquivalents / 1000
 df$TotalAssets = df$TotalAssets / 1000
@@ -219,9 +219,11 @@ load_clean_data <- function() {
 library(openxlsx)
 
 # Define path
-excel_path <- file.path(dirname(current_dir), "data/final", "data_prepped_FINAL_CAR_gpdg_pcp.xlsx")
+#excel_path <- file.path(dirname(current_dir), "data/final", "data_prepped_FINAL_CAR_gpdg_pcp.xlsx")
 
 # Write DataFrame to Excel
-df <- df[!is.na(df[["[-10, 10]"]]), ]
-write.xlsx(df, file = excel_path)
+#df <- df[!is.na(df[["[-10, 10]"]]), ]
+#write.xlsx(df, file = excel_path)
+
+
 
