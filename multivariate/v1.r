@@ -205,4 +205,6 @@ df_used_model1 <- model1_trim$model
 # Define path
 excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_data.xlsx")
 
+
 #write_xlsx(df_used_model1, path = excel_path)
+

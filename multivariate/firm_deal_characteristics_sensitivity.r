@@ -9,7 +9,7 @@ df <- load_clean_data()
 
 # Define variables of interest
 vars_to_check <- c("MtoB", "Size", "Margin", "MarketCap", "DtoE")
-df$MarketCap <- df$MarketCap / 1000 #Convert to Billions
+df$MarketCap <- df$MarketCap / 1000 #Convert to trillions of Euros for easier interpretation
 #1. Summary Statistics + Quantiles
 summary_stats <- df %>%
   select(all_of(vars_to_check)) %>%
@@ -42,6 +42,7 @@ print(quantile_stats)
 print(central_stats)
 
 #2. Boxplots for Visual Outlier Detection
+
 # MtoB
 ggplot(df, aes(y = MtoB)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
@@ -57,7 +58,7 @@ ggplot(df, aes(y = Size)) +
 # EBITDA Margin
 ggplot(df, aes(y = Margin)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
-  labs(title = "Boxplot of EBITDA Margin", y = "EBITDA Margin") +
+  labs(title = "Boxplot of EBITDA Margin", y = "EBITDA Margin (in decimals)") +
   theme_minimal()
 
 # MarketCap
@@ -97,7 +98,7 @@ ggplot(df, aes(x = Margin)) +
 
 ggplot(df, aes(x = MarketCap)) +
   geom_density(fill = "steelblue", alpha = 0.4, adjust = 1.5) +
-  labs(title = "Density Plot of Market Cap (Brillions)",
+  labs(title = "Density Plot of Market Cap (Billions)",
        x = "Market Cap",
        y = "Density") +
   theme_minimal()
@@ -108,6 +109,25 @@ ggplot(df, aes(x = DtoE)) +
        x = "Debt-to-Equity",
        y = "Density") +
   theme_minimal()
+
+#### Checking negative values in Margin
+# Identify observations
+df$negative <- df$Margin < -1
+
+summary <- df %>%
+  group_by(Crisis) %>%
+  summarise(
+    total_obs = n(),
+    negative_obs = sum(negative, na.rm = TRUE)
+  ) %>%
+  mutate(negative_pct = 100 * negative_obs / total_obs)
+
+# Replace Crisis indicator with labels for readability
+summary$Crisis <- ifelse(summary$Crisis == 1, "Crisis", "Non-crisis")
+
+# Print summary
+print(summary)
+
 
 # Removing all outliers to begin with.
 clean_outliers_trimmed <- function(data) {
@@ -137,10 +157,10 @@ clean_outliers_trimmed <- function(data) {
   mc_q01 <- quantile(data_step4$MarketCap, 0.01, na.rm = TRUE)
   mc_q99 <- quantile(data_step4$MarketCap, 0.99, na.rm = TRUE)
   data_step5 <- data_step4 %>% filter(MarketCap >= mc_q01, MarketCap <= mc_q99)
-  n_step5 <- nrow(data_step5)
+  n_ste p5 <- nrow(data_step5)
   
-  #6. Remove negative DtoE and trim at [1%, 99%]
-  data_step6 <- data_step5 %>% filter(DtoE > 0)
+  #6. Remove negative DtoE and trim at [99%]
+  data_step6 <- data_step5 %>% filter(DtoE >= 0)
   dte_q99 <- quantile(data_step6$DtoE, 0.99, na.rm = TRUE)
   data_final <- data_step6 %>% filter(DtoE <= dte_q99)
   n_final <- nrow(data_final)
@@ -198,7 +218,7 @@ se_list <- list(
 stargazer(model1, model2, model3,model4, model5, 
           type = "text", title = "Regression Results",
           se = se_list)
-1.036
+
 binary_vars <- c("Cash", "Stock", "Private", "CrossBorder", "Diversification", "Crisis", "TargetAsset")
 for(var in binary_vars) {
   cat("\n\n", var, "\n")
