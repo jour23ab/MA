@@ -34,14 +34,14 @@ print("Columns in df:", df.columns)
 print(f"Announce_acquirer column exists: {'Announce_acquirer' in df.columns}")
 print(f"The length of the unfiltered dataset is: {len(df)}")
 
-""" # Step 4: Load the Excel file and create a dictionary of DataFrames
+# Step 4: Load the Excel file and create a dictionary of DataFrames
 excel_file = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"]
 sheets_dict = pd.read_excel(excel_file, sheet_name=None)  # sheet_name=None reads all sheets 
-"""
 
-# Step 4: Load the pickle file containing the dictionary of DataFrames
+
+""" # Step 4: Load the pickle file containing the dictionary of DataFrames
 pickle_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_event_returns_per_merger_merged.pkl"
-sheets_dict = joblib.load(pickle_file)
+sheets_dict = joblib.load(pickle_file) """
 
 # Step 5: Create an empty list to store the combined "M&A Announced Date" and "Buyers/Investors"
 announce_acquirer_list = []
@@ -233,16 +233,16 @@ print(f"Highest number of rows: {max_rows}")
 print(f"Lowest number of rows: {min_rows}")
 
 
-""" # Export the dataframes to a single Excel file with multiple sheets
+# Export the dataframes to a single Excel file with multiple sheets
 output_file = config["STOCK_FILES"]["est_returns_regression_ready"]
 with pd.ExcelWriter(output_file) as writer:
     for sheet_name, table in separate_tables.items():
         table.to_excel(writer, sheet_name=sheet_name, index=False)
-"""
 
-# Export the dataframes to a pickle file containing the est_returns_regression_ready file.
+
+""" # Export the dataframes to a pickle file containing the est_returns_regression_ready file.
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/est_returns_regression_ready.pkl"
-joblib.dump(separate_tables, output_file)
+joblib.dump(separate_tables, output_file) """
 
 # Each dataframe in separate_tables contains the columns "Simple Return", "Buyers/Investors", "M&A Announced Date", "Excess Market Return", "SMB" and "HML".
 # For each dataframe in separate_tables, i want to run a regression that estimates the 3-factor model by Fama and French. 
@@ -292,16 +292,16 @@ for key, df in separate_tables.items():
             # Store the DataFrame in the regression_results dictionary
             regression_results[sheet_name] = result_df
 
-""" # Now we can export the results to an Excel file
+# Now we can export the results to an Excel file
 output_file = config["FINAL_FILES"]["FINAL_regression_results"]
 with pd.ExcelWriter(output_file) as writer:
     for sheet_name, result_df in regression_results.items():
         # Write each regression result to its own sheet
         result_df.to_excel(writer, sheet_name=sheet_name, index=False) 
-"""
 
-# Export the dataframes to a single pickle file
+
+""" # Export the dataframes to a single pickle file
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_regression_results.pkl"
-joblib.dump(regression_results, output_file)
+joblib.dump(regression_results, output_file) """
 
 print(f"Regression results have been successfully exported to {output_file}")

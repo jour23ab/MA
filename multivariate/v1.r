@@ -14,19 +14,19 @@ df$car_1_default <- df$`[-1, 1]`
 
 #default model for getting the residual plots to test for meeting the assumptions of regression analysis.
 model1_default = lm(car_10_default ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP10 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+                      GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model2_default = lm(car_7_default ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP7 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+                      GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model3_default = lm(car_5_default ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP5 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+                      GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model4_default = lm(car_3_default ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP3 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+                      GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model5_default = lm(car_1_default ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP1 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+                      GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 print(summary(model1_default))
 
@@ -40,19 +40,19 @@ df$CAR_1_wins  <- Winsorize(df$`[-1, 1]`, val = quantile(df$`[-1, 1]`, probs = c
 
 #Winsorized
 model1 = lm(CAR_10_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP10 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+              GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model2 = lm(CAR_7_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP7 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+              GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model3 = lm(CAR_5_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP5 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+              GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model4 = lm(CAR_3_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP3 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+              GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 model5 = lm(CAR_1_wins ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP1 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
+              GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, df)
 
 # Trimming to remove the bottom 1% and top 1% CARs - dropping outliers
 df_10 <- df[df$`[-10, 10]` >= quantile(df$`[-10, 10]`, 0.01, na.rm = TRUE) & 
@@ -72,19 +72,19 @@ df_1 <- df[df$`[-1, 1]` >= quantile(df$`[-1, 1]`, 0.01, na.rm = TRUE) &
 
 # Run models on trimmed data
 model1_trim <- lm(`[-10, 10]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP10 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_10)
+                    GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_10)
 
 model2_trim <- lm(`[-7, 7]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP7 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_7)
+                    GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_7)
 
 model3_trim <- lm(`[-5, 5]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP5 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_5)
+                    GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_5)
 
 model4_trim <- lm(`[-3, 3]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP3 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_3)
+                    GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_3)
 
 model5_trim <- lm(`[-1, 1]` ~ Cash + Private + CrossBorder + Diversification + MtoB + Crisis + PCP1 +
-                GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_1)
+                    GDPG + Margin + DtoE + Hybrid + Size + CashAndEquivalents + TargetAsset + BullBearSpread, data = df_1)
 
 
 #Extract robust standard errors
@@ -176,7 +176,7 @@ save_diagnostic_plots <- function(models, output_dir) {
   for (model_name in names(models)) {
     model <- models[[model_name]]
     plot_path <- file.path(output_dir, paste0(model_name, "_residuals.png"))
-
+    
     png(filename = plot_path, width = 800, height = 800)
     par(mfrow = c(2, 2))
     plot(model)
@@ -204,6 +204,7 @@ df_used_model1 <- model1_trim$model
 
 # Define path
 excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_data.xlsx")
+
 
 #write_xlsx(df_used_model1, path = excel_path)
 

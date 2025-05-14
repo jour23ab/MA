@@ -173,18 +173,21 @@ print(f"Highest number of rows: {max_rows}")
 print(f"Lowest number of rows: {min_rows}")
 
 
-# Export the dataframes to a single pickle file
+""" # Export the dataframes to a single pickle file
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_event_returns_per_merger_merged.pkl"
 joblib.dump(separate_tables, output_file)
+ """
 
-print(f"✅ Data saved to {output_file}")
 
-"""
+
 # Export the dataframes to a single Excel file with multiple sheets
 output_file = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"] 
 with pd.ExcelWriter(output_file) as writer:
     for sheet_name, table in separate_tables.items():
         table.to_excel(writer, sheet_name=sheet_name, index=False)
-"""
+
+
+print(f"✅ Data saved to {output_file}")
+
 
 

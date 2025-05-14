@@ -1,17 +1,59 @@
+# Final integrated script for CAAR calculation and plotting with winsorize/trim toggle
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import configparser
+from scipy import stats
+from openpyxl import load_workbook
 
 # Load config file
 config = configparser.ConfigParser()
 config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
-
 file1 = config["FINAL_FILES"]["abnormal_returns"]
 
-# Load all sheets into dictionaries
-event_values_dict = pd.read_excel(file1, sheet_name=None)  # Loads all sheets into a dictionary
+# Load all sheets into dictionary
+event_values_dict = pd.read_excel(file1, sheet_name=None)
 
-# Define the event windows (in terms of days before and after the announcement date)
+# Load and clean CAR dataframe
+car_path = r"C:\Users\b407939\Documents\GitHub\MA\data\final\df_trimmed_characteristics.xlsx" # Options: "graph_data.xlsx" for winsorize/trim, "df_trimmed_characteristics.xlsx" for none.
+car_df = pd.read_excel(car_path).rename(columns={"CAR_10_wins": "[-10, 10]"})
+car_df = car_df.dropna(subset=["[-10, 10]"])
+
+# Toggle outlier handling method: 'winsorize', 'trim', or 'none'
+outlier_handling_mode = "none"  # Options: "winsorize", "trim", "none"
+
+# Define event windows
+event_windows = ["[-10, 10]", "[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]"]
+
+# Dictionary to store processed car_df per window
+car_df_dict = {}
+
+for window in event_windows:
+    if window in car_df.columns:
+        temp_df = car_df[["Sheet Name", window]].dropna(subset=[window]).copy()
+
+        if outlier_handling_mode == "winsorize":
+            low, high = temp_df[window].quantile([0.01, 0.99])
+            temp_df[window] = temp_df[window].clip(lower=low, upper=high)
+
+        elif outlier_handling_mode == "trim":
+            low, high = temp_df[window].quantile([0.01, 0.99])
+            temp_df = temp_df[(temp_df[window] >= low) & (temp_df[window] <= high)]
+
+        # If "none", keep values as-is
+        car_df_dict[window] = temp_df
+
+
+# Create a version of event_values_dict for each event window
+event_values_dicts = {}
+
+for window, df in car_df_dict.items():
+    valid_sheets = set(df["Sheet Name"].dropna().astype(str))
+    filtered_dict = {k: v for k, v in event_values_dict.items() if k in valid_sheets}
+    event_values_dicts[window] = filtered_dict
+
+
+# Define event windows
 event_windows = {
     '[-10, 10]': (-10, 10),
     '[-7, 7]': (-7, 7),
@@ -20,98 +62,121 @@ event_windows = {
     '[-1, 1]': (-1, 1)
 }
 
-# Dictionary to store DataFrames for each event window
 event_window_dfs = {}
-
-# Loop through each event window first
 for window_name, (start_offset, end_offset) in event_windows.items():
-    print(f"Processing event window: {window_name} (from {start_offset} to {end_offset})")
-    
-    aar_list = []  # Stores AARs for each day in the event window
-    days = list(range(start_offset, end_offset + 1))  # List of days in the event window
-    
-    # Loop through each day in the event window
+    # Use the filtered event_values_dict for this specific window
+    current_event_dict = event_values_dicts.get(window_name, {})
+
+    days = list(range(start_offset, end_offset + 1))
+    aar_list = []
+
     for day_offset in days:
-        print(f"  Processing day {day_offset} relative to announcement date")
-        
-        abnormal_returns = []  # List to store abnormal returns for this day across mergers
-        
-        # Loop through each merger's dataframe
-        for sheet_name, values_df in event_values_dict.items():
-            if all(col in values_df.columns for col in ["M&A Announced Date", "Abnormal Return", "Buyers/Investors", "Ticker"]):
-                
-                # Ensure date columns are in datetime format
-                values_df["Date"] = pd.to_datetime(values_df["Date"]).dt.date
-                values_df["M&A Announced Date"] = pd.to_datetime(values_df["M&A Announced Date"]).dt.date
+        daily_returns = []
 
-                # Get announcement date
-                announce_date = values_df["M&A Announced Date"].iloc[0]
+        for sheet, df in current_event_dict.items():
+            if all(col in df.columns for col in ["M&A Announced Date", "Abnormal Return", "Date"]):
+                df["Date"] = pd.to_datetime(df["Date"]).dt.date
+                df["M&A Announced Date"] = pd.to_datetime(df["M&A Announced Date"]).dt.date
+                announce_date = df["M&A Announced Date"].iloc[0]
 
-                # Find index of announcement date
-                if announce_date in values_df["Date"].values:
-                    announcement_idx = values_df[values_df["Date"] == announce_date].index[0]
-                    day_idx = announcement_idx + day_offset  # Adjust index for this day
-                    
-                    # Ensure index is within bounds
-                    if 0 <= day_idx < len(values_df):
-                        abnormal_return = values_df.loc[day_idx, "Abnormal Return"]
-                        abnormal_returns.append(abnormal_return)  # Store abnormal return
-                    else:
-                        print(f"    Warning: Day index {day_idx} out of bounds for merger {sheet_name}")
-        
-        # Compute AAR for this day (average across all mergers)
-        if abnormal_returns:
-            aar_value = sum(abnormal_returns) / len(abnormal_returns)
-            aar_list.append(aar_value)  # Store AAR for this day
-        else:
-            print(f"    No abnormal returns found for day {day_offset} in event window {window_name}")
-            aar_list.append(None)  # Handle case where no returns were found
+                if announce_date in df["Date"].values:
+                    announce_idx = df[df["Date"] == announce_date].index[0]
+                    day_idx = announce_idx + day_offset
 
-    # Compute CAAR (cumulative sum of AARs over time)
+                    if 0 <= day_idx < len(df):
+                        ar = df.loc[day_idx, "Abnormal Return"]
+                        daily_returns.append(ar)
+
+        aar = np.mean(daily_returns) if daily_returns else None
+        aar_list.append(aar)
+
     caar_list = pd.Series(aar_list).cumsum().tolist()
+    event_window_dfs[window_name] = pd.DataFrame({"Day": days, "AAR": aar_list, "CAAR": caar_list})
 
-    # Create a DataFrame for this event window
-    event_window_df = pd.DataFrame({
-        "Day": days,
-        "AAR": aar_list,
-        "CAAR": caar_list
-    })
-
-    # Store the DataFrame in the dictionary
-    event_window_dfs[window_name] = event_window_df
-    print(f"  Finished processing {window_name} event window.")
-
-# Final check to see the results
-print("Completed processing all event windows. DataFrames stored in event_window_dfs:")
+# Plotting
 for window_name, df in event_window_dfs.items():
-    print(f"{window_name}:")
-    print(df)  # Display first few rows of each event window DataFrame
-
-
-
-
-# Loop through each event window and plot
-for window_name, df in event_window_dfs.items():
-    print(f"Plotting {window_name} event window...")
-    
-    # Create a new figure
     plt.figure(figsize=(10, 6))
-    
-    # Plot CAAR on the same graph
-    plt.plot(df["Day"], df["CAAR"], label="CAAR", color="red", marker='x', linestyle='--', linewidth=2)
-    
-    # Adding titles and labels
-    plt.title(f"CAAR for Event Window {window_name}", fontsize=14)
-    plt.xlabel("Days Relative to Announcement Date", fontsize=12)
-    plt.ylabel("Returns", fontsize=12)
-    
-    # Adding a legend to distinguish between AAR and CAAR
+    plt.plot(df["Day"], df["CAAR"], label="CAAR", linestyle="--", marker="x")
+    mode_label = {
+        "winsorize": "Winsorized",
+        "trim": "Trimmed",
+        "none": "Trimming Based on Acquirer Characteristics"
+    }[outlier_handling_mode]
+
+    plt.title(f"CAAR for Event Window {window_name} ({mode_label})")
+
+    plt.xlabel("Days Relative to Announcement")
+    plt.ylabel("Cumulative Abnormal Return")
     plt.legend()
-    
-    # Show grid for better readability
     plt.grid(True)
-    
-    # Display the plot
+    plt.tight_layout()
     plt.show()
 
-    print(f"Finished plotting {window_name} event window.\n")
+
+
+
+# Compute CAAR statistics based on trimmed/winsorized CAR values for each window
+caar_summary = {
+    "Metric": ["CAAR", "Std Dev", "T-Statistic", "P-Value (2-sided)"]
+}
+
+for window, df in car_df_dict.items():
+    values = df[window].dropna().values
+    n = len(values)
+
+    if n > 1:
+        mean = np.mean(values)
+        std = np.std(values, ddof=1)
+        t_stat = mean / (std / np.sqrt(n))
+        p_val = 2 * (1 - stats.t.cdf(np.abs(t_stat), df=n - 1))
+    else:
+        mean, std, t_stat, p_val = [np.nan] * 4
+
+    caar_summary[window] = [mean, std, t_stat, p_val]
+
+# Create summary DataFrame
+caar_DF = pd.DataFrame(caar_summary)
+
+print(f"Results based on CAR method ({mode_label})")
+print(caar_DF)
+print("CAAR statistics successfully calculated")
+
+
+
+""" 
+# Load CAR DataFrame from Excel file
+cars_df = car_df
+
+# Identify event window columns
+event_windows = ["[-10, 10]", "[-7, 7]", "[-5, 5]", "[-3, 3]", "[-1, 1]"]
+
+# Keep only rows where the main 21-day event window is not NaN
+car_values = cars_df.dropna(subset=["[-10, 10]"])
+
+# Initialize CAAR summary dictionary
+caar_summary = {
+    "Metric": ["CAAR", "Std Dev", "T-Statistic", "P-Value (2-sided)"]
+}
+
+# Loop through each event window column and calculate statistics using the filtered rows
+for window in event_windows:
+    values = car_values[window].values
+    n = len(values)
+
+    if n > 1:
+        mean = np.mean(values)
+        std = np.std(values, ddof=1)
+        t_stat = mean / (std / np.sqrt(n))
+        p_val = 2 * (1 - stats.t.cdf(np.abs(t_stat), df=n - 1))
+    else:
+        mean, std, t_stat, p_val = [np.nan] * 4
+
+    caar_summary[window] = [mean, std, t_stat, p_val]
+
+# Create summary DataFrame
+caar_DF = pd.DataFrame(caar_summary)
+
+print("results based on CAR method")
+print(caar_DF)
+print("CAAR statistics successfully calculated")
+ """
