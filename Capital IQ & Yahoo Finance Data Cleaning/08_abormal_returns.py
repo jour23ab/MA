@@ -3,6 +3,9 @@ import configparser
 import warnings
 import joblib
 
+# This code calculates the abnormal returns for each day in the event windows for each merger.
+
+
 # Suppress all FutureWarnings globally
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -10,21 +13,21 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 config = configparser.ConfigParser()
 config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
 
-""" # File paths
+# File paths
 file1 = config["FINAL_FILES"]["FINAL_regression_results"]
 file2 = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"]
 
 # Load all sheets into dictionaries
 regression_results_dict = pd.read_excel(file1, sheet_name=None)
-event_values_dict = pd.read_excel(file2, sheet_name=None) """
+event_values_dict = pd.read_excel(file2, sheet_name=None)
 
-# File paths
+""" # File paths
 pickle_file1 = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_regression_results.pkl"
 pickle_file2 = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_event_returns_per_merger_merged.pkl"
 
 # Load all pickle dictionaries into dictionaries
 regression_results_dict = joblib.load(pickle_file1)
-event_values_dict = joblib.load(pickle_file2)
+event_values_dict = joblib.load(pickle_file2) """
 
 # reporting variable
 faulty_data = 0
@@ -78,15 +81,56 @@ print(f"Length of regression results dictionary: {len(regression_results_dict)}"
 # That file removed some rows based on it not having enough data for regressing. Thats why regression results dict
 # has fewer values. (I think)
 
-""" output_file = config["FINAL_FILES"]["abnormal_returns"]
+# REMOVE DATAFRAMES WITH NO EXPECTED RETURN OF ABNORMAL RETURN.
+# Keep track of original number of DataFrames
+original_count = len(event_values_dict)
+
+# Filter the dictionary
+event_values_dict = {
+    key: df for key, df in event_values_dict.items()
+    if {"Expected Return", "Abnormal Return"}.issubset(df.columns)
+}
+
+# Calculate how many were removed
+removed_count = original_count - len(event_values_dict)
+
+print(f"Removed {removed_count} DataFrames.")
+
+
+# REMOVE EXTREME OUTLIERS
+# Store keys of dataframes to remove
+keys_to_remove = []
+
+for key, df in event_values_dict.items():
+    # Check if 'Abnormal Return' column exists first (safe coding)
+    if "Abnormal Return" in df.columns:
+        abnormal_sum = df["Abnormal Return"].sum()
+        if abnormal_sum > 2000:
+            keys_to_remove.append(key)
+
+# Remove the flagged dataframes
+for key in keys_to_remove:
+    del event_values_dict[key]
+
+# Report the removed keys
+print(f"Removed {len(keys_to_remove)} DataFrames due to extreme Abnormal Returns.")
+print("Keys removed:", keys_to_remove)
+
+
+
+
+
+
+
+output_file = config["FINAL_FILES"]["abnormal_returns"]
 
 # Export the updated dictionary to an Excel file with each dataframe as a separate sheet
 with pd.ExcelWriter(output_file) as writer:
     for sheet_name, df in event_values_dict.items():
         df.to_excel(writer, sheet_name=sheet_name, index=False)  # Export each sheet as a separate dataframe
-"""
-# Export the updated dictionary to a pickle file as a dictionary
+
+""" # Export the updated dictionary to a pickle file as a dictionary
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/abnormal_returns.pkl"
-joblib.dump(event_values_dict, output_file)
+joblib.dump(event_values_dict, output_file) """
 
 print(f"Exported updated data to {output_file}")

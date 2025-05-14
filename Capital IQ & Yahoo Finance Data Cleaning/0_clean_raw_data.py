@@ -47,7 +47,7 @@ def clean_data(file_path):
         rows_removed_acq = initial_row_count - current_row_count
 
         # Remove rows with no transaction value 
-        #df = df[df["Total Transaction Value (€EURmm, Historical rate)"] != "-"]
+        df = df[df["Total Transaction Value (€EURmm, Historical rate)"] != "-"]
         
         # Record the number of rows after filtering
         final_row_count = len(df)
