@@ -23,7 +23,7 @@ The empirical implementation and data engineering are conducted primarily in Pyt
 ## Repository Structure
 
 MA/
-├── Capital IQ & Yahoo Finance Data Cleaning/   # Raw M&A, firm fundamentals, and stock return data cleaning
+├── Capital IQ & Yahoo Finance Data Cleaning/   # Data fetching, data treatment, abnormal return calculation and final sample construction
 ├── data/                                       # Contains final sample files and cleaned datasets that are used for analyses
 ├── Descriptive Statistics/                     # Scripts for summary statistics, distribution plots, and CAR diagnostics
 ├── multivariate/                               # Cross-sectional regression models and sensitivity tests
