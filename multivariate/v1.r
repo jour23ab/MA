@@ -5,8 +5,6 @@ setwd(current_dir)
 source("data_prep.R")
 df <- load_clean_data()
 
-#cut of the data to check changes in some coefficients
-#df <- df[df$`M&A Announced Date` <= "2015-12-31", ]
 
 df$car_10_default <- df$`[-10, 10]`
 df$car_7_default <- df$`[-7, 7]`
@@ -98,7 +96,6 @@ se_list <- list(
   sqrt(diag(hccm(model5, type = "hc0")))
 )
 
-#df <- df[-c(70, 130), ]
 
 #Generate output
 stargazer(model1, model2, model3,model4, model5, 
@@ -116,7 +113,6 @@ se_list <- list(
   sqrt(diag(hccm(model5_trim, type = "hc0")))
 )
 
-#df <- df[-c(70, 130), ]
 
 #Generate output
 stargazer(model1_trim, model2_trim, model3_trim, model4_trim, model5_trim, 
@@ -195,5 +191,5 @@ df_used_model1 <- model1_trim$model
 # Define path
 excel_path <- file.path(dirname(current_dir), "data/final", "model1_trim_used_data.xlsx")
 
-write_xlsx(df_used_model1, path = excel_path)
+#write_xlsx(df_used_model1, path = excel_path)
 

@@ -39,7 +39,7 @@ df <- load_clean_data()
   c(as.Date("2022-02-23"), as.Date("2022-11-22"))
 )'
 #150 EMA and 25 threshold. Smoother.
-crisis_periods = list(
+'crisis_periods = list(
   c(as.Date("2008-03-17"), as.Date("2008-04-28")),
   c(as.Date("2008-09-24"), as.Date("2011-01-10")),
   c(as.Date("2011-08-10"), as.Date("2012-10-30")),
@@ -47,7 +47,35 @@ crisis_periods = list(
   c(as.Date("2016-01-18"), as.Date("2016-08-09")),
   c(as.Date("2020-03-26"), as.Date("2021-02-04")),
   c(as.Date("2022-03-10"), as.Date("2022-12-20"))
-)
+)'
+
+#Testing the crisis periods
+#Base regression but with 3-day fluctuation threshold
+'crisis_periods = list(
+  c(as.Date("2008-02-19"), as.Date("2008-03-20")),
+  c(as.Date("2008-03-25"), as.Date("2008-05-07")),
+  c(as.Date("2008-09-19"), as.Date("2008-12-23")),
+  c(as.Date("2008-12-29"), as.Date("2009-04-09")),
+  c(as.Date("2009-04-14"), as.Date("2009-04-30")),
+  c(as.Date("2009-05-04"), as.Date("2009-12-23")),
+  c(as.Date("2009-12-28"), as.Date("2009-12-30")),
+  c(as.Date("2010-01-04"), as.Date("2010-03-22")),
+  c(as.Date("2010-05-07"), as.Date("2010-12-15")),
+  c(as.Date("2011-08-09"), as.Date("2011-12-23")),
+  c(as.Date("2011-12-27"), as.Date("2012-04-05")),
+  c(as.Date("2012-04-10"), as.Date("2012-10-01")),
+  c(as.Date("2015-09-08"), as.Date("2015-11-05")),
+  c(as.Date("2016-01-14"), as.Date("2016-03-24")),
+  c(as.Date("2016-03-29"), as.Date("2016-05-24")),
+  c(as.Date("2016-06-14"), as.Date("2016-08-04")),
+  c(as.Date("2020-03-18"), as.Date("2020-04-09")),
+  c(as.Date("2020-04-14"), as.Date("2020-04-30")),
+  c(as.Date("2020-05-04"), as.Date("2020-12-23")),
+  c(as.Date("2020-12-28"), as.Date("2020-12-30")),
+  c(as.Date("2021-01-04"), as.Date("2021-01-05")),
+  c(as.Date("2022-03-04"), as.Date("2022-04-14")),
+  c(as.Date("2022-04-19"), as.Date("2022-12-06"))
+)'
 
 df$AnnouncementDate <- as.Date(df$`M&A Announced Date`)
 is_in_crisis <- function(date, intervals) {

@@ -58,13 +58,13 @@ ggplot(df, aes(y = Size)) +
 # EBITDA Margin
 ggplot(df, aes(y = Margin)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
-  labs(title = "Boxplot of EBITDA Margin", y = "EBITDA Margin") +
+  labs(title = "Boxplot of EBITDA Margin", y = "EBITDA Margin (in decimals)") +
   theme_minimal()
 
 # MarketCap
 ggplot(df, aes(y = MarketCap)) +
   geom_boxplot(fill = "lightblue", outlier.color = "red") +
-  labs(title = "Boxplot of Market Cap", y = "Market Cap (Trillions)") +
+  labs(title = "Boxplot of Market Cap", y = "Market Cap (Billions)") +
   theme_minimal()
 
 # DtoE
@@ -98,7 +98,7 @@ ggplot(df, aes(x = Margin)) +
 
 ggplot(df, aes(x = MarketCap)) +
   geom_density(fill = "steelblue", alpha = 0.4, adjust = 1.5) +
-  labs(title = "Density Plot of Market Cap (trillions)",
+  labs(title = "Density Plot of Market Cap (Billions)",
        x = "Market Cap",
        y = "Density") +
   theme_minimal()
@@ -109,6 +109,25 @@ ggplot(df, aes(x = DtoE)) +
        x = "Debt-to-Equity",
        y = "Density") +
   theme_minimal()
+
+#### Checking negative values in Margin
+# Identify observations
+df$negative <- df$Margin < -1
+
+summary <- df %>%
+  group_by(Crisis) %>%
+  summarise(
+    total_obs = n(),
+    negative_obs = sum(negative, na.rm = TRUE)
+  ) %>%
+  mutate(negative_pct = 100 * negative_obs / total_obs)
+
+# Replace Crisis indicator with labels for readability
+summary$Crisis <- ifelse(summary$Crisis == 1, "Crisis", "Non-crisis")
+
+# Print summary
+print(summary)
+
 
 # Removing all outliers to begin with.
 clean_outliers_trimmed <- function(data) {
@@ -138,10 +157,10 @@ clean_outliers_trimmed <- function(data) {
   mc_q01 <- quantile(data_step4$MarketCap, 0.01, na.rm = TRUE)
   mc_q99 <- quantile(data_step4$MarketCap, 0.99, na.rm = TRUE)
   data_step5 <- data_step4 %>% filter(MarketCap >= mc_q01, MarketCap <= mc_q99)
-  n_step5 <- nrow(data_step5)
+  n_ste p5 <- nrow(data_step5)
   
-  #6. Remove negative DtoE and trim at [1%, 99%]
-  data_step6 <- data_step5 %>% filter(DtoE > 0)
+  #6. Remove negative DtoE and trim at [99%]
+  data_step6 <- data_step5 %>% filter(DtoE >= 0)
   dte_q99 <- quantile(data_step6$DtoE, 0.99, na.rm = TRUE)
   data_final <- data_step6 %>% filter(DtoE <= dte_q99)
   n_final <- nrow(data_final)
@@ -161,7 +180,6 @@ clean_outliers_trimmed <- function(data) {
 df_trimmed <- clean_outliers_trimmed(df)
 #summary of df_trimmed
 
-df_trimmed$MarketCap <- df_trimmed$MarketCap * 1000 #Convert to Trillions back to Billions
 df<- df_trimmed
 
 #Winsorization to remove the bottom 1% and top 99% CARs - capping outliers
@@ -209,5 +227,5 @@ for(var in binary_vars) {
 
 #Export the trimmed dataframe with trimmed characteristics to Excel
 #Commmenting out so we don't overwrite the original data each time this script is run
-excel_path <- file.path(dirname(current_dir), "data/final", "df_trimmed_characteristics.xlsx")
-write.xlsx(df, file = excel_path)
+#excel_path <- file.path(dirname(current_dir), "data/final", "df_trimmed_characteristics.xlsx")
+#write.xlsx(df, file = excel_path)
