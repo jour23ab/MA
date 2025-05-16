@@ -2,14 +2,19 @@ import pandas as pd
 import yfinance as yf
 import time
 import configparser
+import os
 
-# Indlæs config fil
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load config file dynamically
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-# Load the dataset with tickers, start, and end dates
-input_file = config["STOCK_FILES"]["adj_event_prices"]
-df = pd.read_excel(input_file)
+# Load the dataset from STOCK_FILES section
+input_path = os.path.join(base_dir, config["STOCK_FILES"]["adj_event_prices"])
+df = pd.read_excel(input_path)
 
 # Find amount of rows removed because of no data over event date:
 initial_length = len(df)
@@ -18,7 +23,7 @@ df = df[df["Closing Prices"].notna()]
 
 final_rows_1 = len(df)
 removed_rows = initial_length - final_rows_1
-print(f"Rows removed because no closing prices over event window {input_file}: {removed_rows}\n")
+print(f"Rows removed because no closing prices over event window {input_path}: {removed_rows}\n")
 print(f"Det vil tage ca. {1 * len(df["Ticker"]) / 60} minutter at hente deres estimation data")
 
 # Ensure the relevant columns exist
@@ -87,8 +92,10 @@ print(f"Initial row count: {final_rows_1}")
 print(f"Rows removed because of no estimation data: {removed_rows_tck}")
 print(f"Final row count: {final_rows_2}")
 
-# Save the updated dataset
-output_file = config['STOCK_FILES']["adj_estimation_prices"]
-df.to_excel(output_file, index=False)
+# Build full output path from config relative path
+output_path = os.path.join(base_dir, config['STOCK_FILES']["adj_estimation_prices"])
 
-print(f"Historical prices saved to {output_file}")
+# Save the updated dataset
+df.to_excel(output_path, index=False)
+
+print(f"Historical prices saved to {output_path}")

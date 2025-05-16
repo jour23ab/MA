@@ -3,16 +3,22 @@ import pandas as pd
 import configparser
 from collections import Counter
 import numpy as np
+import os
+
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # === Load config and event data ===
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-file1 = config["FINAL_FILES"]["abnormal_returns"]
-event_values_dict = pd.read_excel(file1, sheet_name=None)  # All sheets loaded
+# Resolve path to abnormal_returns.xlsx and load all sheets into a dictionary
+file1 = os.path.join(base_dir, config["FINAL_FILES"]["abnormal_returns"])
+event_values_dict = pd.read_excel(file1, sheet_name=None)
 
 # === Load characteristics dataset ===
-char_file = config["FINAL_FILES"]["cars_analysis"]
+char_file = os.path.join(base_dir, config["FINAL_FILES"]["cars_analysis"])
 char_df = pd.read_excel(char_file)
 
 # === Classify mergers based on payment method ===

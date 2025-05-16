@@ -5,17 +5,25 @@ import numpy as np
 import configparser
 from scipy import stats
 from openpyxl import load_workbook
+import os
 
-# Load config file
+# Get the directory of the current script
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the config file
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
-file1 = config["FINAL_FILES"]["abnormal_returns"]
+config.read(config_path, encoding="utf-8")
 
-# Load all sheets into dictionary
+# Load all sheets from abnormal_returns.xlsx
+file1 = os.path.join(base_dir, config["FINAL_FILES"]["abnormal_returns"])
 event_values_dict = pd.read_excel(file1, sheet_name=None)
 
-# Load and clean CAR dataframe
-car_path = r"C:\Users\b407939\Documents\GitHub\MA\data\final\df_trimmed_characteristics.xlsx" # Options: "graph_data.xlsx" for winsorize/trim, "df_trimmed_characteristics.xlsx" for none.
+# Go one level up to reach the GitHub/MA/data/final folder
+project_root = os.path.dirname(base_dir)  # This goes one level up
+
+# Define full path to the CAR dataframe
+car_path = os.path.join(project_root, "data", "final", "df_trimmed_characteristics.xlsx")
 car_df = pd.read_excel(car_path).rename(columns={"CAR_10_wins": "[-10, 10]"})
 car_df = car_df.dropna(subset=["[-10, 10]"])
 

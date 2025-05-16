@@ -2,6 +2,7 @@ import pandas as pd
 import configparser
 import warnings
 import joblib
+import os
 
 # This code calculates the abnormal returns for each day in the event windows for each merger.
 
@@ -9,13 +10,17 @@ import joblib
 # Suppress all FutureWarnings globally
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-# Load config file
-config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# File paths
-file1 = config["FINAL_FILES"]["FINAL_regression_results"]
-file2 = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"]
+# Load config file
+config_path = os.path.join(base_dir, "config.ini")
+config = configparser.ConfigParser()
+config.read(config_path, encoding="utf-8")
+
+# Resolve file paths from config
+file1 = os.path.join(base_dir, config["FINAL_FILES"]["FINAL_regression_results"])
+file2 = os.path.join(base_dir, config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"])
 
 # Load all sheets into dictionaries
 regression_results_dict = pd.read_excel(file1, sheet_name=None)
@@ -122,15 +127,16 @@ print("Keys removed:", keys_to_remove)
 
 
 
-output_file = config["FINAL_FILES"]["abnormal_returns"]
+# Resolve the full output path from the config file
+output_path = os.path.join(base_dir, config["FINAL_FILES"]["abnormal_returns"])
 
-# Export the updated dictionary to an Excel file with each dataframe as a separate sheet
-with pd.ExcelWriter(output_file) as writer:
+# Export each DataFrame in the dictionary to its own sheet in a single Excel file
+with pd.ExcelWriter(output_path) as writer:
     for sheet_name, df in event_values_dict.items():
-        df.to_excel(writer, sheet_name=sheet_name, index=False)  # Export each sheet as a separate dataframe
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+print(f"✅ Abnormal returns saved to: {output_path}")
 
 """ # Export the updated dictionary to a pickle file as a dictionary
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/abnormal_returns.pkl"
 joblib.dump(event_values_dict, output_file) """
-
-print(f"Exported updated data to {output_file}")

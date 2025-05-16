@@ -1,16 +1,19 @@
 import pandas as pd
 import re
-import os
 import configparser
+import os
 
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Indlæs config fil
+# Load config file from the same folder
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-# List of CSV file paths
+# List of CSV/Excel file paths (resolved as full paths)
 file_paths = [
-    config["RAW"]["raw_input"],
+    os.path.join(base_dir, config["RAW"]["raw_input"]),
 ]
 
 # Function to clean a single file
@@ -59,11 +62,15 @@ def clean_data(file_path):
         # Remove all parentheses and their contents
         df['Buyers/Investors'] = df['Buyers/Investors'].str.replace(r'\s*\(.*?\)', '', regex=True)
         
-        # Save the cleaned data to a new Excel file
+        # Assume file_path is already defined as:
+        file_path = os.path.join(base_dir, config["RAW"]["raw_input"])
+
+        # Generate cleaned filename and save path
         base_name = os.path.basename(file_path).replace('_preprocessed.xlsx', '_cleaned.xlsx')
         output_dir = os.path.dirname(file_path)
         cleaned_file_path = os.path.join(output_dir, base_name)
 
+        # Save the cleaned dataframe
         df.to_excel(cleaned_file_path, index=False)
 
         print(f"✅ Cleaned data saved to: {cleaned_file_path}")

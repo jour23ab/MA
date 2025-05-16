@@ -3,15 +3,19 @@ import ast
 import re
 import configparser
 import joblib
+import os
 
+# Get the directory where the script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Indlæs config fil
+# Load config file
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
 # Read the Excel file containing stock data
-filsti = config["STOCK_FILES"]["adj_estimation_prices"]
-df = pd.read_excel(filsti)
+file_path = os.path.join(base_dir, config["STOCK_FILES"]["adj_estimation_prices"])
+df = pd.read_excel(file_path)
 
 # Ensure column is treated as a string
 df["Closing Prices"] = df["Closing Prices"].astype(str)
@@ -180,14 +184,14 @@ joblib.dump(separate_tables, output_file)
 
 
 
+# Build full output path from config
+output_path = os.path.join(base_dir, config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"])
+
 # Export the dataframes to a single Excel file with multiple sheets
-output_file = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"] 
-with pd.ExcelWriter(output_file) as writer:
+with pd.ExcelWriter(output_path) as writer:
     for sheet_name, table in separate_tables.items():
         table.to_excel(writer, sheet_name=sheet_name, index=False)
 
-
-print(f"✅ Data saved to {output_file}")
-
+print(f"✅ Data saved to: {output_path}")
 
 

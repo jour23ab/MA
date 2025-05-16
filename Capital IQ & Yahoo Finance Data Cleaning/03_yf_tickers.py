@@ -3,11 +3,21 @@ import requests
 import time
 import random
 import configparser
+import os
 
 
-# Indlæs config fil
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the config file dynamically
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
+
+# Load the dataset from the relative path specified in config.ini
+input_path = os.path.join(base_dir, config["CLEANED_FILES"]["no_overlapping"])
+df = pd.read_excel(input_path)
+
 
 user_agents = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -15,10 +25,6 @@ user_agents = [
     "Mozilla/5.0 (X11; Ubuntu; Linux x86_64)",
     "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)"
 ]
-
-# Load company names from Excel
-input_file = config["CLEANED_FILES"]["no_overlapping"]
-df = pd.read_excel(input_file)
 
 initial_length = len(df)
 
@@ -74,9 +80,11 @@ print(f"Initial row count: {initial_length}")
 print(f"Rows removed because of no ticker: {removed_rows_tck}")
 print(f"Final row count: {final_length}")
 
-# Save to Excel
-output_file = config["STOCK_FILES"]["with_tickers"]
-df.to_excel(output_file, index=False)
+# Build full output path from relative path in config
+output_path = os.path.join(base_dir, config["STOCK_FILES"]["with_tickers"])
 
-print(f"Tickers successfully saved to {output_file}")
+# Save to Excel
+df.to_excel(output_path, index=False)
+
+print(f"Tickers successfully saved to {output_path}")
 

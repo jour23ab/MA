@@ -3,14 +3,19 @@ import yfinance as yf
 import time
 import configparser
 import random
+import os
 
-# Load config file
+# Get the directory where the script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the config file
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-# Load the dataset
-input_file = config["STOCK_FILES"]["with_tickers"]
-df = pd.read_excel(input_file)
+# Load the dataset from the STOCK_FILES section
+input_path = os.path.join(base_dir, config["STOCK_FILES"]["with_tickers"])
+df = pd.read_excel(input_path)
 
 initial_length = len(df)
 
@@ -64,7 +69,7 @@ for index, row in df.iterrows():
         prices = get_closing_prices(ticker, start_date, end_date)
         
         closing_prices.append(prices)
-        time.sleep(1)  # Avoid rate limits
+        time.sleep(2)  # Avoid rate limits
     else:
         closing_prices.append(None)
 
@@ -83,8 +88,10 @@ print(f"Initial row count: {initial_length}")
 print(f"Rows removed because of no event data: {removed_rows_tck}")
 print(f"Final row count: {final_length}")
 
-# Save to Excel
-output_file = config["STOCK_FILES"]["adj_event_prices"]
-df.to_excel(output_file, index=False)
+# Build the full path to the output file from the config
+output_path = os.path.join(base_dir, config["STOCK_FILES"]["adj_event_prices"])
 
-print(f"Event prices successfully saved to {output_file}")
+# Save to Excel
+df.to_excel(output_path, index=False)
+
+print(f"✅ Event prices successfully saved to: {output_path}")

@@ -3,14 +3,20 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import pandas as pd
 import configparser
+import os
+
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Load config file
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-file1 = config["FINAL_FILES"]["merged_cars"]
+# Resolve full path to the merged_cars file
+file1 = os.path.join(base_dir, config["FINAL_FILES"]["merged_cars"])
 
-# Load the shee twith CAR values for each event window
+# Load the sheet with CAR values for each event window
 df = pd.read_excel(file1)
 
 

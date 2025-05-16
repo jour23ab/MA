@@ -162,15 +162,24 @@ class CAARAnalyzer:
 
 
 
-# === Load config and event data ===
-config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
-file1 = config["FINAL_FILES"]["abnormal_returns"]
-event_values_dict = pd.read_excel(file1, sheet_name=None)
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# === Load merger characteristics ===
-char_file = r"C:\Users\b407939\Documents\GitHub\MA\data\final\data_prepped_FINAL_CAR_gpdg_pcp.xlsx"
+# === Load config and event data ===
+config_path = os.path.join(base_dir, "config.ini")
+config = configparser.ConfigParser()
+config.read(config_path, encoding="utf-8")
+
+# Resolve abnormal_returns.xlsx (from config)
+abnormal_returns_path = os.path.join(base_dir, config["FINAL_FILES"]["abnormal_returns"])
+event_values_dict = pd.read_excel(abnormal_returns_path, sheet_name=None)
+
+# === Load merger characteristics from data/final/ ===
+project_root = os.path.dirname(base_dir)  # Go up one level to MA/
+char_file = os.path.join(project_root, "data", "final", "data_prepped_FINAL_CAR_gpdg_pcp.xlsx")
 char_df = pd.read_excel(char_file)
+
+
 print(f"Intial length of char_df: {len(char_df)}")
 # === Drop NAs for the same columns which we regress on ===
 # === Rename columns ===
@@ -230,15 +239,24 @@ else:
 
 
 
-filsti = r"C:\Users\b407939\Documents\GitHub\MA\data\final\graph_data.xlsx"
-char_df.to_excel(filsti, index=False)
+# Go up one level to reach the project root (e.g., /MA/)
+project_root = os.path.dirname(base_dir)
+
+# Build the full path to data/final/graph_data.xlsx
+output_path = os.path.join(project_root, "data", "final", "graph_data.xlsx")
+
+# Save the DataFrame
+char_df.to_excel(output_path, index=False)
+
+print(f"✅ Saved to: {output_path}")
 
 
+# Create a subfolder path relative to your script's directory
+plot_folder = os.path.join(base_dir, "plots", "CAAR characteristics", "New")
 
+# Ensure the folder exists
+os.makedirs(plot_folder, exist_ok=True)
 
-
-# === Output folder for plots ===
-plot_folder = "C:/Users/b407939/Desktop/CAAR/CAAR characteristics/New"
 
 # === Define medians ===
 mean_val_mtob = char_df["MtoB"].mean()

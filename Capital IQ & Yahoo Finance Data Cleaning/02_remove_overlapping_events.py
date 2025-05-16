@@ -1,13 +1,20 @@
-import pandas as pd
 import configparser
+import os
+import pandas as pd
 
-# Indlæs config fil
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Build the path to the config.ini file
+config_path = os.path.join(base_dir, "config.ini")
+
+# Load the config file
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
-# Load the cleaned dataset
-file_path = config['MACRO_FILES']['merged_data'] # <-- dataset with vba code that added start and end dates.
-df = pd.read_excel(file_path)
+# Example: Load the merged macro dataset
+merged_data_path = os.path.join(base_dir, config['MACRO_FILES']['merged_data'])
+df = pd.read_excel(merged_data_path)
 
 # Convert date columns to datetime format
 df['Start Date (Event)'] = pd.to_datetime(df['Start Date (Event)'], errors='coerce').dt.date
@@ -44,8 +51,10 @@ for acquirer, group in df.groupby('Buyers/Investors'):
 # Remove overlapping events
 df_cleaned = df.drop(index=overlap_indices).reset_index(drop=True)
 
+# Get the relative path from config and build full path
+output_path = os.path.join(base_dir, config['CLEANED_FILES']['no_overlapping'])
+
 # Save the cleaned dataset
-output_path = config['CLEANED_FILES']['no_overlapping']
 df_cleaned.to_excel(output_path, index=False)
 
 # Reporting

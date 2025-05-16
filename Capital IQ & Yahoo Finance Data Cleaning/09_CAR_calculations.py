@@ -1,20 +1,24 @@
 import pandas as pd
 import configparser
 import joblib
+import os
 
 # THis code calculates the CAR values for each event window for each merger based on the abnormal returns calculated in the previous file.
 
 
-# Load config file
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the config file
+config_path = os.path.join(base_dir, "config.ini")
 config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+config.read(config_path, encoding="utf-8")
 
+# Resolve the full path to the abnormal_returns file
+file1 = os.path.join(base_dir, config["FINAL_FILES"]["abnormal_returns"])
 
-file1 = config["FINAL_FILES"]["abnormal_returns"]
-
-# Load all sheets into dictionaries
-event_values_dict = pd.read_excel(file1, sheet_name=None)  # Loads all sheets into a dictionary
-
+# Load all sheets into a dictionary of DataFrames
+event_values_dict = pd.read_excel(file1, sheet_name=None)
 
 """ file1 = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/abnormal_returns.pkl"
 event_values_dict = joblib.load(file1) """
@@ -91,13 +95,14 @@ cars_DF = pd.DataFrame(car_data, columns=columns)
 
 print(cars_DF)
 
+# Resolve full path from config using base_dir
+output_path = os.path.join(base_dir, config["FINAL_FILES"]["car_values"])
+
 # Save to Excel
-output_path = config["FINAL_FILES"]["car_values"]
 cars_DF.to_excel(output_path, index=False)
 
-print(f"Length of cars_DF: {len(cars_DF)}")
-
-print("CARs DataFrame successfully created and saved!")
+print(f"✅ Length of cars_DF: {len(cars_DF)}")
+print(f"CARs DataFrame successfully created and saved to: {output_path}")
 
 import pandas as pd
 import numpy as np

@@ -5,17 +5,22 @@ import statsmodels.api as sm
 import configparser
 import warnings
 import joblib
+import os
 
 # Suppress all FutureWarnings globally
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-# Indlæs config fil
-config = configparser.ConfigParser()
-config.read("C:/Users/b407939/Desktop/Speciale/Capital IQ/Kode/config.ini", encoding="utf-8")
+# Get the directory where this script is located
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Read your Excel file
-input_file = config["STOCK_FILES"]["adj_estimation_prices"]
-df = pd.read_excel(input_file)
+# Load config file from the same folder
+config_path = os.path.join(base_dir, "config.ini")
+config = configparser.ConfigParser()
+config.read(config_path, encoding="utf-8")
+
+# Read the Excel file using a dynamically resolved path
+input_path = os.path.join(base_dir, config["STOCK_FILES"]["adj_estimation_prices"])
+df = pd.read_excel(input_path)
 
 import pandas as pd
 
@@ -34,10 +39,11 @@ print("Columns in df:", df.columns)
 print(f"Announce_acquirer column exists: {'Announce_acquirer' in df.columns}")
 print(f"The length of the unfiltered dataset is: {len(df)}")
 
-# Step 4: Load the Excel file and create a dictionary of DataFrames
-excel_file = config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"]
-sheets_dict = pd.read_excel(excel_file, sheet_name=None)  # sheet_name=None reads all sheets 
+# Resolve full path from config using base_dir
+excel_path = os.path.join(base_dir, config["FINAL_FILES"]["FINAL_event_returns_per_merger_merged"])
 
+# Load all sheets into a dictionary of DataFrames
+sheets_dict = pd.read_excel(excel_path, sheet_name=None)  # sheet_name=None reads all sheets
 
 """ # Step 4: Load the pickle file containing the dictionary of DataFrames
 pickle_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_event_returns_per_merger_merged.pkl"
@@ -233,9 +239,11 @@ print(f"Highest number of rows: {max_rows}")
 print(f"Lowest number of rows: {min_rows}")
 
 
+# Resolve the full output path using the base directory
+output_path = os.path.join(base_dir, config["STOCK_FILES"]["est_returns_regression_ready"])
+
 # Export the dataframes to a single Excel file with multiple sheets
-output_file = config["STOCK_FILES"]["est_returns_regression_ready"]
-with pd.ExcelWriter(output_file) as writer:
+with pd.ExcelWriter(output_path) as writer:
     for sheet_name, table in separate_tables.items():
         table.to_excel(writer, sheet_name=sheet_name, index=False)
 
@@ -292,16 +300,18 @@ for key, df in separate_tables.items():
             # Store the DataFrame in the regression_results dictionary
             regression_results[sheet_name] = result_df
 
-# Now we can export the results to an Excel file
-output_file = config["FINAL_FILES"]["FINAL_regression_results"]
-with pd.ExcelWriter(output_file) as writer:
+# Resolve the full path using the base directory
+output_path = os.path.join(base_dir, config["FINAL_FILES"]["FINAL_regression_results"])
+
+# Export regression results to Excel with multiple sheets
+with pd.ExcelWriter(output_path) as writer:
     for sheet_name, result_df in regression_results.items():
-        # Write each regression result to its own sheet
-        result_df.to_excel(writer, sheet_name=sheet_name, index=False) 
+        result_df.to_excel(writer, sheet_name=sheet_name, index=False)
+
 
 
 """ # Export the dataframes to a single pickle file
 output_file = "C:/Users/b407939/Desktop/Speciale/Capital IQ/Test output/FINAL_regression_results.pkl"
 joblib.dump(regression_results, output_file) """
 
-print(f"Regression results have been successfully exported to {output_file}")
+print(f"Regression results have been successfully exported to {output_path}")
